@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mining System Classifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #60efff;
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .architecture-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .architecture-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .architecture-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: #60efff;
+        }
+
+        .architecture-card h4 {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            border-color: #60efff;
+            background: rgba(96, 239, 255, 0.3);
+        }
+
+        .option.correct {
+            border-color: #00ff87;
+            background: rgba(0, 255, 135, 0.3);
+        }
+
+        .option.incorrect {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .demo-interface {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .interface-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .interface-card:hover {
+            transform: scale(1.05);
+        }
+
+        .interface-screenshot {
+            width: 100%;
+            height: 150px;
+            background: #2d3748;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: #60efff;
+        }
+
+        .criteria-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .criteria-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .demo-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .demo-tab {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-tab.active {
+            background: rgba(96, 239, 255, 0.3);
+            color: #60efff;
+        }
+
+        .demo-content {
+            display: none;
+            background: #1a202c;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+        }
+
+        .demo-content.active {
+            display: block;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.1) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Data Mining System Classifications</h3>
+            <div class="timer" id="timer">30:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/12</div>
+            <div class="content">
+                <h1>Data Mining System Classifications</h1>
+                <p class="subtitle">Understanding Architecture Types and Selection Criteria</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 30 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Architecture Types & Selection Criteria</p>
+                    <p>🚀 <strong>Interactive:</strong> Quizzes, Demos, and Hands-on Examples</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Overview -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/12</div>
+            <div class="content">
+                <h2>Learning Objectives</h2>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <h4>🏗️ Architecture Types</h4>
+                        <p>Understand different data mining system architectures and their use cases</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>⚖️ Selection Criteria</h4>
+                        <p>Learn how to choose the right system based on requirements</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>💻 Live Demos</h4>
+                        <p>See different interfaces and platforms in action</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🧠 Interactive Quizzes</h4>
+                        <p>Test your understanding with practical scenarios</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Standalone Systems -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/12</div>
+            <div class="content">
+                <h2>Standalone Systems</h2>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <h4>📊 R Programming</h4>
+                        <p><strong>Pros:</strong> Rich statistical libraries, visualization</p>
+                        <p><strong>Cons:</strong> Memory limitations, single-threaded</p>
+                        <p><strong>Best for:</strong> Statistical analysis, research</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🔧 Weka</h4>
+                        <p><strong>Pros:</strong> GUI-based, educational, Java-based</p>
+                        <p><strong>Cons:</strong> Limited scalability, basic visualizations</p>
+                        <p><strong>Best for:</strong> Learning, prototyping, small datasets</p>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <h3>Key Characteristics</h3>
+                    <p>✅ Self-contained environments</p>
+                    <p>✅ No external database dependencies</p>
+                    <p>❌ Limited by single machine resources</p>
+                    <p>❌ Manual data loading and preprocessing</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Quiz 1 -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/12</div>
+            <div class="content">
+                <div class="quiz-container">
+                    <div class="question">Which standalone system would you choose for a university statistics course with 100 students analyzing datasets under 1GB?</div>
+                    <div class="options" id="quiz1Options">
+                        <div class="option" data-answer="a">A) Apache Spark - for distributed processing</div>
+                        <div class="option" data-answer="b">B) Weka - for its educational GUI interface</div>
+                        <div class="option" data-answer="c">C) SQL Server ML - for database integration</div>
+                        <div class="option" data-answer="d">D) Hadoop ecosystem - for big data processing</div>
+                    </div>
+                    <div id="quiz1Feedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Database-Integrated Systems -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/12</div>
+            <div class="content">
+                <h2>Database-Integrated Systems</h2>
+                <div class="architecture-card" style="max-width: 600px; margin: 20px auto;">
+                    <h4>🗄️ SQL Server Machine Learning</h4>
+                    <p><strong>Architecture:</strong> ML algorithms run inside the database engine</p>
+                    <p><strong>Languages:</strong> T-SQL, R, Python integration</p>
+                    <p><strong>Advantages:</strong></p>
+                    <ul style="text-align: left; margin: 15px 0;">
+                        <li>No data movement required</li>
+                        <li>Leverages database security and permissions</li>
+                        <li>Familiar SQL interface for DBAs</li>
+                        <li>Enterprise-grade scalability</li>
+                    </ul>
+                </div>
+                <div class="interactive-demo">
+                    <div class="demo-tabs">
+                        <div class="demo-tab active" data-tab="sql">SQL Example</div>
+                        <div class="demo-tab" data-tab="architecture">Architecture</div>
+                    </div>
+                    <div class="demo-content active" data-content="sql">
+-- SQL Server ML Example
+EXEC sp_execute_external_script
+@language = N'Python',
+@script = N'
+import pandas as pd
+from sklearn.cluster import KMeans
+model = KMeans(n_clusters=3)
+result = model.fit_predict(InputDataSet)
+OutputDataSet = pd.DataFrame({"cluster": result})
+',
+@input_data_1 = N'SELECT * FROM customer_data'</div>
+                    <div class="demo-content" data-content="architecture">
+Database Engine
+├── SQL Query Processor
+├── ML Services (R/Python Runtime)
+├── Security & Permissions
+└── Storage Engine
+    └── Your Data (No Movement!)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Data Warehouse Integrated -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/12</div>
+            <div class="content">
+                <h2>Data Warehouse Integrated</h2>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <h4>❄️ Snowflake</h4>
+                        <p><strong>Features:</strong> Cloud-native, auto-scaling</p>
+                        <p><strong>ML:</strong> Snowpark, partner integrations</p>
+                        <p><strong>Strength:</strong> Elastic compute, data sharing</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🔍 Google BigQuery</h4>
+                        <p><strong>Features:</strong> Serverless, petabyte-scale</p>
+                        <p><strong>ML:</strong> BigQuery ML (SQL-based)</p>
+                        <p><strong>Strength:</strong> Standard SQL, fast analytics</p>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <div class="demo-tabs">
+                        <div class="demo-tab active" data-tab="bigquery">BigQuery ML</div>
+                        <div class="demo-tab" data-tab="snowflake">Snowpark</div>
+                    </div>
+                    <div class="demo-content active" data-content="bigquery">
+-- BigQuery ML: Create model with SQL
+CREATE OR REPLACE MODEL `project.dataset.customer_segments`
+OPTIONS(
+  model_type='KMEANS',
+  num_clusters=4,
+  kmeans_init_method='KMEANS++'
+) AS
+SELECT * FROM `project.dataset.customers`;</div>
+                    <div class="demo-content" data-content="snowflake">
+# Snowpark Python
+from snowflake.snowpark import Session
+from snowflake.ml.modeling.cluster import KMeans
+
+session = Session.builder.configs(connection_params).create()
+df = session.table("CUSTOMERS")
+model = KMeans(n_clusters=4)
+model.fit(df)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Quiz 2 -->
+        <div class="slide" id="slide7">
+            <div class="slide-number">7/12</div>
+            <div class="content">
+                <div class="quiz-container">
+                    <div class="question">Your company has 50TB of customer data in a data warehouse. You need to build ML models without moving data. Which approach is MOST suitable?</div>
+                    <div class="options" id="quiz2Options">
+                        <div class="option" data-answer="a">A) Export data to R for analysis</div>
+                        <div class="option" data-answer="b">B) Use BigQuery ML or Snowflake ML services</div>
+                        <div class="option" data-answer="c">C) Download data to local Weka installation</div>
+                        <div class="option" data-answer="d">D) Set up a separate Spark cluster</div>
+                    </div>
+                    <div id="quiz2Feedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Distributed Systems -->
+        <div class="slide" id="slide8">
+            <div class="slide-number">8/12</div>
+            <div class="content">
+                <h2>Distributed Systems</h2>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <h4>⚡ Apache Spark</h4>
+                        <p><strong>Strength:</strong> In-memory processing, MLlib</p>
+                        <p><strong>Languages:</strong> Scala, Python, Java, R</p>
+                        <p><strong>Use Case:</strong> Large-scale ML, real-time processing</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🐘 Hadoop Ecosystem</h4>
+                        <p><strong>Components:</strong> HDFS, MapReduce, Mahout</p>
+                        <p><strong>Strength:</strong> Fault tolerance, batch processing</p>
+                        <p><strong>Use Case:</strong> Historical data analysis</p>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <h3>🔄 Distributed Processing Flow</h3>
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; font-family: monospace;">
+                        <p>📊 Data Partitioning → 🖥️ Parallel Processing → 🔄 Data Shuffling → 📈 Result Aggregation</p>
+                        <br>
+                        <p><span class="highlight">Benefits:</span> Handle petabyte-scale data, fault tolerance, horizontal scaling</p>
+                        <p><span class="highlight">Challenges:</span> Complexity, network overhead, debugging distributed issues</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Selection Criteria -->
+        <div class="slide" id="slide9">
+            <div class="slide-number">9/12</div>
+            <div class="content">
+                <h2>Selection Criteria</h2>
+                <div class="criteria-list">
+                    <div class="criteria-item">
+                        <h4>📊 Data Volume & Velocity</h4>
+                        <p><strong>Small (&lt;1GB):</strong> Standalone (R, Weka)</p>
+                        <p><strong>Medium (1GB-1TB):</strong> Database-integrated</p>
+                        <p><strong>Large (&gt;1TB):</strong> Distributed systems</p>
+                        <p><strong>Streaming:</strong> Spark Streaming, Flink</p>
+                    </div>
+                    <div class="criteria-item">
+                        <h4>💻 Computational Resources</h4>
+                        <p><strong>Single machine:</strong> Standalone systems</p>
+                        <p><strong>Existing database:</strong> In-DB processing</p>
+                        <p><strong>Cloud:</strong> Managed services</p>
+                        <p><strong>Cluster:</strong> Distributed frameworks</p>
+                    </div>
+                    <div class="criteria-item">
+                        <h4>🔗 Integration Requirements</h4>
+                        <p><strong>Existing workflows:</strong> API compatibility</p>
+                        <p><strong>Data sources:</strong> Native connectors</p>
+                        <p><strong>Security:</strong> Enterprise authentication</p>
+                        <p><strong>Deployment:</strong> On-premise vs. cloud</p>
+                    </div>
+                    <div class="criteria-item">
+                        <h4>👥 Team Expertise</h4>
+                        <p><strong>SQL-focused:</strong> Database-integrated</p>
+                        <p><strong>Python/R:</strong> Standalone or notebooks</p>
+                        <p><strong>Java/Scala:</strong> Spark ecosystem</p>
+                        <p><strong>No-code:</strong> GUI-based tools</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Demo Interfaces -->
+        <div class="slide" id="slide10">
+            <div class="slide-number">10/12</div>
+            <div class="content">
+                <h2>Interface Comparison Demo</h2>
+                <div class="demo-interface">
+                    <div class="interface-card" onclick="showInterface('weka')">
+                        <div class="interface-screenshot">🖥️</div>
+                        <h4>Weka GUI</h4>
+                        <p>Point-and-click interface, visual workflow, built-in datasets</p>
+                    </div>
+                    <div class="interface-card" onclick="showInterface('notebook')">
+                        <div class="interface-screenshot">📓</div>
+                        <h4>Python Notebook</h4>
+                        <p>Code-based, interactive, rich visualizations, documentation</p>
+                    </div>
+                    <div class="interface-card" onclick="showInterface('cloud')">
+                        <div class="interface-screenshot">☁️</div>
+                        <h4>Cloud Platform</h4>
+                        <p>Web-based, collaborative, managed infrastructure, auto-scaling</p>
+                    </div>
+                </div>
+                <div id="interfaceDemo" class="interactive-demo" style="display: none;">
+                    <div id="interfaceContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Final Quiz -->
+        <div class="slide" id="slide11">
+            <div class="slide-number">11/12</div>
+            <div class="content">
+                <div class="quiz-container">
+                    <div class="question">Scenario: A financial company needs to detect fraud in real-time from millions of daily transactions stored in their existing data warehouse. What system would you recommend?</div>
+                    <div class="options" id="quiz3Options">
+                        <div class="option" data-answer="a">A) Weka for its fraud detection algorithms</div>
+                        <div class="option" data-answer="b">B) R for statistical fraud analysis</div>
+                        <div class="option" data-answer="c">C) Spark Streaming with MLlib for real-time processing</div>
+                        <div class="option" data-answer="d">D) BigQuery ML for batch fraud detection</div>
+                    </div>
+                    <div id="quiz3Feedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Summary -->
+        <div class="slide" id="slide12">
+            <div class="slide-number">12/12</div>
+            <div class="content">
+                <h2>Key Takeaways</h2>
+                <div class="architecture-grid">
+                    <div class="architecture-card">
+                        <h4>🎯 Right Tool for Right Job</h4>
+                        <p>Consider data size, team skills, and infrastructure when selecting systems</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>⚖️ Trade-offs Matter</h4>
+                        <p>Scalability vs. simplicity, performance vs. cost, features vs. learning curve</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🔄 Evolution Path</h4>
+                        <p>Start simple, scale as needed. Many organizations use multiple systems</p>
+                    </div>
+                    <div class="architecture-card">
+                        <h4>🚀 Future-Ready</h4>
+                        <p>Cloud-native, MLOps integration, and real-time capabilities are becoming essential</p>
+                    </div>
+                </div>
+                <div style="margin-top: 40px;">
+                    <h3>Thank You!</h3>
+                    <p>Questions & Discussion</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12;
+        let timeRemaining = 30 * 60; // 30 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 30 * 60;
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Quiz functionality
+        function setupQuiz(quizId, correctAnswer, explanation) {
+            const options = document.querySelectorAll(`#${quizId}Options .option`);
+            const feedback = document.getElementById(`${quizId}Feedback`);
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selections
+                    options.forEach(opt => {
+                        opt.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    
+                    // Mark selected option
+                    this.classList.add('selected');
+                    
+                    // Show correct answer after 1 second
+                    setTimeout(() => {
+                        options.forEach(opt => {
+                            if (opt.dataset.answer === correctAnswer) {
+                                opt.classList.add('correct');
