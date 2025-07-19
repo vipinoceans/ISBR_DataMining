@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mining Systems & Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            background: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 60px;
+            display: none;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.5s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: block;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide h1 {
+            font-size: 3.5rem;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: 2.5rem;
+            color: #34495e;
+            margin-bottom: 25px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .slide h3 {
+            font-size: 2rem;
+            color: #2980b9;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin: 30px 0;
+        }
+
+        .content-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .content-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .system-card {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 15px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .system-card:hover {
+            transform: scale(1.03);
+        }
+
+        .system-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            background: #e8f4fd;
+            margin: 8px 0;
+            padding: 12px 18px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            transition: background 0.3s ease;
+        }
+
+        .feature-list li:hover {
+            background: #d6eafd;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .demo-section {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+
+        .demo-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .demo-tab {
+            padding: 12px 24px;
+            background: #34495e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-tab.active {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .demo-content {
+            display: none;
+            background: #34495e;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .demo-content.active {
+            display: block;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(255,255,255,0.9);
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .architecture-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .flow-item {
+            background: #3498db;
+            color: white;
+            padding: 20px;
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .flow-item:hover {
+            transform: scale(1.1);
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: #7f8c8d;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: width 0.3s ease;
+        }
+
+        .time-indicator {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .slide {
+                padding: 30px 20px;
+            }
+            
+            .slide h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .navigation {
+                bottom: 15px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="progress-bar" id="progressBar"></div>
+        <div class="slide-counter" id="slideCounter">1 / 15</div>
+        <div class="time-indicator" id="timeIndicator">0:00</div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>Data Mining Systems & Integration</h1>
+            <div style="text-align: center; margin: 50px 0;">
+                <h2 style="border: none; color: #7f8c8d;">Systems, Integration & Major Issues</h2>
+            </div>
+            <div class="architecture-flow">
+                <div class="flow-item">Standalone Systems</div>
+                <div class="arrow">→</div>
+                <div class="flow-item">Database Integration</div>
+                <div class="arrow">→</div>
+                <div class="flow-item">Distributed Systems</div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Agenda Overview -->
+        <div class="slide">
+            <h2>Session Overview</h2>
+            <div class="content-grid">
+                <div class="content-box">
+                    <h3>Data Mining System Classifications</h3>
+                    <p><strong>Duration:</strong> 25 minutes (10:15-10:40)</p>
+                    <ul class="feature-list">
+                        <li>Architecture Types</li>
+                        <li>Selection Criteria</li>
+                        <li>Practical Demonstrations</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Key Topics</h3>
+                    <ul class="feature-list">
+                        <li>Standalone Systems (R, Weka)</li>
+                        <li>Database Integration (SQL Server ML)</li>
+                        <li>Data Warehouse Integration</li>
+                        <li>Distributed Systems (Spark, Hadoop)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: System Classifications Overview -->
+        <div class="slide">
+            <h2>Data Mining System Classifications</h2>
+            <div class="architecture-flow">
+                <div class="flow-item" style="background: #e74c3c;">Standalone</div>
+                <div class="flow-item" style="background: #f39c12;">Database Integrated</div>
+                <div class="flow-item" style="background: #27ae60;">Warehouse Integrated</div>
+                <div class="flow-item" style="background: #9b59b6;">Distributed</div>
+            </div>
+            <div style="margin-top: 40px;">
+                <h3>Classification Criteria:</h3>
+                <ul class="feature-list">
+                    <li><strong>Data Storage:</strong> Where and how data is stored and accessed</li>
+                    <li><strong>Processing Location:</strong> Where computations are performed</li>
+                    <li><strong>Integration Level:</strong> How tightly coupled with existing systems</li>
+                    <li><strong>Scalability:</strong> Ability to handle increasing data volumes</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Standalone Systems -->
+        <div class="slide">
+            <h2>Standalone Systems</h2>
+            <div class="content-grid">
+                <div class="system-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <h4>R Programming Environment</h4>
+                    <p>Statistical computing and graphics platform with extensive data mining packages.</p>
+                    <ul style="margin-top: 15px;">
+                        <li>• RStudio IDE</li>
+                        <li>• 18,000+ packages on CRAN</li>
+                        <li>• Strong statistical foundation</li>
+                    </ul>
+                </div>
+                <div class="system-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                    <h4>Weka (Waikato Environment)</h4>
+                    <p>Java-based workbench with GUI and command-line interfaces for machine learning.</p>
+                    <ul style="margin-top: 15px;">
+                        <li>• Visual workflow designer</li>
+                        <li>• 200+ algorithms</li>
+                        <li>• Educational focus</li>
+                    </ul>
+                </div>
+            </div>
+            <h3>Characteristics:</h3>
+            <ul class="feature-list">
+                <li><strong>Self-contained:</strong> Complete environment with all necessary tools</li>
+                <li><strong>File-based:</strong> Work with local files (CSV, ARFF, etc.)</li>
+                <li><strong>Single-machine:</strong> Processing limited by local resources</li>
+                <li><strong>Rapid prototyping:</strong> Quick experimentation and analysis</li>
+            </ul>
+        </div>
+
+        <!-- Slide 5: Database-Integrated Systems -->
+        <div class="slide">
+            <h2>Database-Integrated Systems</h2>
+            <div class="system-card" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                <h4>SQL Server Machine Learning Services</h4>
+                <p>Execute R and Python scripts directly within SQL Server database engine.</p>
+            </div>
+            <div class="content-grid" style="margin-top: 30px;">
+                <div class="content-box">
+                    <h3>Advantages</h3>
+                    <ul class="feature-list">
+                        <li>Data stays in database</li>
+                        <li>Leverage SQL optimization</li>
+                        <li>Integrated security model</li>
+                        <li>Reduced data movement</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Use Cases</h3>
+                    <ul class="feature-list">
+                        <li>Real-time scoring</li>
+                        <li>Batch predictions</li>
+                        <li>Data preprocessing</li>
+                        <li>Model deployment</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="demo-section">
+                <h3>Example: SQL Server ML</h3>
+                <div class="demo-content active">
+                    <pre>-- Train model within database
+EXEC sp_execute_external_script
+@language = N'R',
+@script = N'
+    model <- rxLogit(formula, data = InputDataSet)
+    trained_model <- data.frame(model = as.raw(serialize(model, NULL)))
+',
+@input_data_1 = N'SELECT * FROM training_data'</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Data Warehouse Integration -->
+        <div class="slide">
+            <h2>Data Warehouse Integrated Systems</h2>
+            <div class="content-grid">
+                <div class="system-card" style="background: linear-gradient(135deg, #27ae60, #229954);">
+                    <h4>Snowflake</h4>
+                    <p>Cloud data platform with built-in machine learning capabilities and external functions.</p>
+                    <ul style="margin-top: 15px;">
+                        <li>• Snowpark for ML</li>
+                        <li>• External Functions</li>
+                        <li>• Auto-scaling compute</li>
+                    </ul>
+                </div>
+                <div class="system-card" style="background: linear-gradient(135deg, #8e44ad, #7d3c98);">
+                    <h4>Google BigQuery ML</h4>
+                    <p>Create and execute machine learning models using standard SQL queries.</p>
+                    <ul style="margin-top: 15px;">
+                        <li>• SQL-based ML</li>
+                        <li>• Serverless architecture</li>
+                        <li>• Integrated with GCP</li>
+                    </ul>
+                </div>
+            </div>
+            <h3>Key Benefits:</h3>
+            <ul class="feature-list">
+                <li><strong>Massive Scale:</strong> Handle petabytes of data efficiently</li>
+                <li><strong>No Data Movement:</strong> ML runs where data lives</li>
+                <li><strong>SQL Familiarity:</strong> Use existing SQL skills for ML</li>
+                <li><strong>Automatic Optimization:</strong> Query optimization and resource management</li>
+            </ul>
+        </div>
+
+        <!-- Slide 7: BigQuery ML Demo -->
+        <div class="slide">
+            <h2>BigQuery ML Example</h2>
+            <div class="demo-section">
+                <h3>Creating ML Models with SQL</h3>
+                <div class="demo-tabs">
+                    <button class="demo-tab active" onclick="showDemo(0)">Create Model</button>
+                    <button class="demo-tab" onclick="showDemo(1)">Make Predictions</button>
+                    <button class="demo-tab" onclick="showDemo(2)">Evaluate Model</button>
+                </div>
+                <div class="demo-content active">
+                    <pre>-- Create a linear regression model
+CREATE MODEL `project.dataset.sales_model`
+OPTIONS(
+  model_type='linear_reg',
+  input_label_cols=['sales']
+) AS
+SELECT
+  marketing_spend,
+  season,
+  region,
+  sales
+FROM `project.dataset.sales_data`</pre>
+                </div>
+                <div class="demo-content">
+                    <pre>-- Make predictions
+SELECT *
+FROM ML.PREDICT(
+  MODEL `project.dataset.sales_model`,
+  (SELECT marketing_spend, season, region
+   FROM `project.dataset.new_data`)
+)</pre>
+                </div>
+                <div class="demo-content">
+                    <pre>-- Evaluate model performance
+SELECT *
+FROM ML.EVALUATE(
+  MODEL `project.dataset.sales_model`,
+  (SELECT * FROM `project.dataset.test_data`)
+)</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Distributed Systems Overview -->
+        <div class="slide">
+            <h2>Distributed Systems</h2>
+            <div class="architecture-flow">
+                <div class="flow-item" style="background: #e67e22; width: 100px; height: 100px;">Data</div>
+                <div class="arrow">→</div>
+                <div class="flow-item" style="background: #3498db; width: 100px; height: 100px;">Cluster</div>
+                <div class="arrow">→</div>
+                <div class="flow-item" style="background: #27ae60; width: 100px; height: 100px;">Results</div>
+            </div>
+            <h3>Key Characteristics:</h3>
+            <ul class="feature-list">
+                <li><strong>Horizontal Scaling:</strong> Add more nodes to increase capacity</li>
+                <li><strong>Fault Tolerance:</strong> Continue processing despite node failures</li>
+                <li><strong>Data Locality:</strong> Process data where it's stored</li>
+                <li><strong>Parallel Processing:</strong> Execute tasks across multiple machines</li>
+            </ul>
+            <div style="margin-top: 30px;">
+                <h3>When to Use Distributed Systems:</h3>
+                <ul class="feature-list">
+                    <li>Data volume exceeds single-machine capacity</li>
+                    <li>Processing time requirements demand parallelization</li>
+                    <li>High availability and fault tolerance needed</li>
+                    <li>Future growth expected to be substantial</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: Apache Spark -->
+        <div class="slide">
+            <h2>Apache Spark</h2>
+            <div class="system-card" style="background: linear-gradient(135deg, #e67e22, #d35400);">
+                <h4>Unified Analytics Engine</h4>
+                <p>Fast, general-purpose cluster computing system with built-in modules for SQL, streaming, ML, and graph processing.</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-box">
+                    <h3>Core Components</h3>
+                    <ul class="feature-list">
+                        <li><strong>Spark SQL:</strong> Structured data processing</li>
+                        <li><strong>MLlib:</strong> Machine learning library</li>
+                        <li><strong>Spark Streaming:</strong> Real-time processing</li>
+                        <li><strong>GraphX:</strong> Graph computation</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Key Features</h3>
+                    <ul class="feature-list">
+                        <li><strong>In-Memory:</strong> 100x faster than Hadoop MapReduce</li>
+                        <li><strong>APIs:</strong> Java, Scala, Python, R</li>
+                        <li><strong>Lazy Evaluation:</strong> Optimized execution plans</li>
+                        <li><strong>RDD:</strong> Resilient Distributed Datasets</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Hadoop Ecosystem -->
+        <div class="slide">
+            <h2>Hadoop Ecosystem</h2>
+            <div class="content-grid">
+                <div class="content-box">
+                    <h3>Core Components</h3>
+                    <ul class="feature-list">
+                        <li><strong>HDFS:</strong> Distributed file system</li>
+                        <li><strong>MapReduce:</strong> Programming model</li>
+                        <li><strong>YARN:</strong> Resource management</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Data Mining Tools</h3>
+                    <ul class="feature-list">
+                        <li><strong>Mahout:</strong> Scalable ML algorithms</li>
+                        <li><strong>Pig:</strong> High-level data flow language</li>
+                        <li><strong>Hive:</strong> SQL-like query language</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="demo-section">
+                <h3>Mahout Example: Collaborative Filtering</h3>
+                <div class="demo-content active">
+                    <pre>// Collaborative filtering with Mahout
+DataModel model = new FileDataModel(new File("ratings.csv"));
+UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
+UserNeighborhood neighborhood = new ThresholdUserNeighborhood(0.1, similarity, model);
+UserBasedRecommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
+
+List&lt;RecommendedItem&gt; recommendations = recommender.recommend(userID, 5);</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: System Selection Criteria -->
+        <div class="slide">
+            <h2>Selection Criteria</h2>
+            <table class="comparison-table">
+                <tr>
+                    <th>Criteria</th>
+                    <th>Standalone</th>
+                    <th>DB-Integrated</th>
+                    <th>DW-Integrated</th>
+                    <th>Distributed</th>
+                </tr>
+                <tr>
+                    <td><strong>Data Volume</strong></td>
+                    <td>Small-Medium (GB)</td>
+                    <td>Medium (GB-TB)</td>
+                    <td>Large (TB-PB)</td>
+                    <td>Very Large (PB+)</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Velocity</strong></td>
+                    <td>Batch</td>
+                    <td>Real-time/Batch</td>
+                    <td>Batch/Near real-time</td>
+                    <td>Real-time/Batch</td>
+                </tr>
+                <tr>
+                    <td><strong>Complexity</strong></td>
+                    <td>Low</td>
+                    <td>Medium</td>
+                    <td>Medium</td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <td><strong>Cost</strong></td>
+                    <td>Low</td>
+                    <td>Medium</td>
+                    <td>High</td>
+                    <td>Very High</td>
+                </tr>
+                <tr>
+                    <td><strong>Skill Required</strong></td>
+                    <td>Basic-Medium</td>
+                    <td>Medium-High</td>
+                    <td>Medium</td>
+                    <td>High-Expert</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Slide 12: Data Volume Considerations -->
+        <div class="slide">
+            <h2>Data Volume & Velocity Considerations</h2>
+            <div class="content-grid">
+                <div class="content-box">
+                    <h3>Volume Thresholds</h3>
+                    <ul class="feature-list">
+                        <li><strong>&lt; 10GB:</strong> Standalone systems sufficient</li>
+                        <li><strong>10GB - 1TB:</strong> Consider DB integration</li>
+                        <li><strong>1TB - 100TB:</strong> Data warehouse solutions</li>
+                        <li><strong>&gt; 100TB:</strong> Distributed systems required</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Velocity Requirements</h3>
+                    <ul class="feature-list">
+                        <li><strong>Batch:</strong> Hours/days acceptable</li>
+                        <li><strong>Near Real-time:</strong> Minutes to hours</li>
+                        <li><strong>Real-time:</strong> Seconds to minutes</li>
+                        <li><strong>Streaming:</strong> Milliseconds to seconds</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <h3>Performance Considerations:</h3>
+                <ul class="feature-list">
+                    <li><strong>Network Bandwidth:</strong> Data transfer costs and time</li>
+                    <li><strong>Storage Type:</strong> SSD vs HDD performance differences</li>
+                    <li><strong>Memory Availability:</strong> In-memory processing capabilities</li>
+                    <li><strong>CPU Resources:</strong> Computational complexity requirements</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 13: Integration Requirements -->
+        <div class="slide">
+            <h2>Integration Requirements</h2>
+            <div class="content-grid">
+                <div class="content-box">
+                    <h3>Technical Integration</h3>
+                    <ul class="feature-list">
+                        <li><strong>Data Sources:</strong> Number and types</li>
+                        <li><strong>APIs:</strong> REST, SOAP, GraphQL</li>
+                        <li><strong>Protocols:</strong> HTTP, FTP, messaging</li>
+                        <li><strong>Formats:</strong> JSON, XML, CSV, binary</li>
+                    </ul>
+                </div>
+                <div class="content-box">
+                    <h3>Organizational Integration</h3>
+                    <ul class="feature-list">
+                        <li><strong>Security:</strong> Authentication, authorization</li>
+                        <li><strong>Compliance:</strong> GDPR, HIPAA, SOX</li>
+                        <li><strong>Workflows:</strong> Existing business processes</li>
+                        <li><strong>Governance:</strong> Data quality, lineage</li>
+                    </ul>
+                </div>
+            </div>
+            <div style="margin-top: 30px;">
+                <h3>Integration Patterns:</h3>
+                <ul class="feature-list">
+                    <li><strong>ETL/ELT:</strong> Extract, Transform, Load processes</li>
+                    <li><strong>Data Pipelines:</strong> Automated data flow management</li>
+                    <li><strong>Event-Driven:</strong> Real-time data processing triggers</li>
+                    <li><strong>Microservices:</strong> Decoupled, scalable components</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 14: Interface Demonstrations -->
+        <div class="slide">
+            <h2>Interface Demonstrations</h2>
+            <div class="demo-section">
+                <div class="demo-tabs">
+                    <button class="demo-tab active" onclick="showDemo(0)">Weka GUI</button>
+                    <button class="demo-tab" onclick="showDemo(1)">Python Notebook</button>
+                    <button class="demo-tab" onclick="showDemo(2)">Cloud Platform</button>
+                </div>
+                <div class="demo-content active">
+                    <h4>Weka GUI Interface</h4>
+                    <p><strong>Features:</strong></p>
+                    <ul style="color: #bdc3c7; margin: 10px 0;">
+                        <li>• Visual workflow designer</li>
+                        <li>• Point-and-click operation</li>
+                        <li>• Built-in data visualization</li>
+                        <li>• Algorithm comparison tools</li>
+                    </ul>
+                    <p><strong>Best for:</strong> Educational purposes, quick prototyping, non-programmers</p>
+                </div>
+                <div class="demo-content">
+                    <h4>Python Jupyter Notebook</h4>
+                    <pre style="color: #2ecc71;">
+# Data mining with scikit-learn
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+
+# Load and preprocess
