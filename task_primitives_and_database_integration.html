@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Primitives and Database Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #ffd700;
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #60efff;
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: #60efff;
+        }
+
+        .card h4 {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255, 215, 0, 0.3) 0%, rgba(255, 215, 0, 0.1) 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .architecture-diagram {
+            background: #1a202c;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .architecture-diagram .step {
+            background: #333;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 5px 0;
+            color: #60efff;
+            width: fit-content;
+            text-align: center;
+        }
+
+        .architecture-diagram .arrow {
+            font-size: 1.5em;
+            color: #ffd700;
+            margin: 5px 0;
+        }
+
+        .architecture-diagram .component {
+            background: #555;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 5px 0;
+            color: white;
+            width: fit-content;
+            text-align: center;
+        }
+
+        /* Quiz specific styles */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            border-color: #60efff;
+            background: rgba(96, 239, 255, 0.3);
+        }
+
+        .option.correct {
+            border-color: #00ff87;
+            background: rgba(0, 255, 135, 0.3);
+        }
+
+        .option.incorrect {
+            border-color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        /* Demo tabs specific styles */
+        .demo-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .demo-tab {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .demo-tab.active {
+            background: rgba(96, 239, 255, 0.3);
+            color: #60efff;
+        }
+
+        .demo-content {
+            display: none;
+            background: #1a202c;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            text-align: left;
+            white-space: pre-wrap; /* For code formatting */
+        }
+
+        .demo-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Data Mining Systems</h3>
+            <div class="timer" id="timer">20:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/12</div>
+            <div class="content">
+                <h1>Task Primitives and Database Integration</h1>
+                <p class="subtitle">Designing Effective Data Mining Systems</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 20 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Task Specification, Integration Challenges, Case Study</p>
+                    <p>🚀 <strong>Focus:</strong> Practical considerations for real-world systems</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Learning Objectives -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/12</div>
+            <div class="content">
+                <h2>Learning Objectives</h2>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>🔍 Understand Task Primitives</h4>
+                        <p>Define and identify key components for specifying data mining tasks.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔗 Grasp Integration Challenges</h4>
+                        <p>Recognize the complexities of integrating data mining into existing systems.</p>
+                    </div>
+                    <div class="card">
+                        <h4>💡 Explore a Case Study</h4>
+                        <p>Analyze a real-world e-commerce recommendation system architecture.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛠️ Engage with Interactive Elements</h4>
+                        <p>Test your knowledge with quizzes and explore practical demos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Task Specification - Overview -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/12</div>
+            <div class="content">
+                <h2>Task Specification Components</h2>
+                <p class="subtitle">Defining 'What to Mine' and 'How to Mine It'</p>
+                <div class="interactive-demo">
+                    <p>Data mining is not just about algorithms; it begins with clearly defining the problem.</p>
+                    <p><strong>Task Primitives</strong> are the building blocks that allow users to precisely specify their data mining queries.</p>
+                    <ul style="margin-top: 15px;">
+                        <li><span class="highlight">Kind of knowledge to be mined</span></li>
+                        <li><span class="highlight">Background knowledge and constraints</span></li>
+                        <li><span class="highlight">Interestingness measures</span></li>
+                        <li><span class="highlight">Presentation format</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Task Specification - Kind of Knowledge -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/12</div>
+            <div class="content">
+                <h2>Kind of Knowledge to be Mined</h2>
+                <p class="subtitle">What type of patterns are we looking for?</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>📈 Characterization & Discrimination</h4>
+                        <p>Summarizing characteristics of a target class (e.g., "What are typical customer demographics?").</p>
+                        <p>Comparing characteristics of two or more classes (e.g., "How do high-value customers differ from low-value ones?").</p>
+                    </div>
+                    <div class="card">
+                        <h4>🛒 Association & Correlation</h4>
+                        <p>Discovering relationships between items (e.g., "Customers who buy X also buy Y").</p>
+                        <p>Example: Market Basket Analysis.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🏷️ Classification & Prediction</h4>
+                        <p>Building models to predict class labels (e.g., "Will this customer churn?").</p>
+                        <p>Predicting continuous values (e.g., "What will be next month's sales?").</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔗 Clustering & Outlier Analysis</h4>
+                        <p>Grouping similar data objects into clusters (e.g., "Identify natural customer segments").</p>
+                        <p>Detecting data objects that deviate significantly from the norm (e.g., "Flag fraudulent transactions").</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Quiz 1 - Kind of Knowledge -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/12</div>
+            <div class="content">
+                <div class="quiz-container">
+                    <div class="question">Which type of knowledge mining would be most suitable to identify groups of customers with similar purchasing behaviors without prior defined categories?</div>
+                    <div class="options" id="quiz1Options">
+                        <div class="option" data-answer="a">A) Classification</div>
+                        <div class="option" data-answer="b">B) Association</div>
+                        <div class="option" data-answer="c">C) Clustering</div>
+                        <div class="option" data-answer="d">D) Characterization</div>
+                    </div>
+                    <div id="quiz1Feedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Task Specification - Background Knowledge & Constraints -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/12</div>
+            <div class="content">
+                <h2>Background Knowledge & Constraints</h2>
+                <p class="subtitle">Guiding the Mining Process and Filtering Results</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>📚 Background Knowledge (Domain Expertise)</h4>
+                        <p>Hierarchies: Product categories (e.g., Electronics -> Laptops -> Gaming Laptops).</p>
+                        <p>Rules: Business rules, expert knowledge that can prune search space or validate findings.</p>
+                        <p>Example: "Only consider products sold in the last year."</p>
+                    </div>
+                    <div class="card">
+                        <h4>🚫 Constraints</h4>
+                        <p><strong>Time:</strong> "Find patterns within 5 minutes."</p>
+                        <p><strong>Resource:</strong> "Use no more than 16GB RAM."</p>
+                        <p><strong>Privacy:</strong> "Ensure no individual customer data is exposed in the results."</p>
+                        <p><strong>Format:</strong> "Output results as a decision tree."</p>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <p>Background knowledge helps focus the mining process, while constraints ensure the results are relevant, efficient, and compliant.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Task Specification - Interestingness Measures -->
+        <div class="slide" id="slide7">
+            <div class="slide-number">7/12</div>
+            <div class="content">
+                <h2>Interestingness Measures</h2>
+                <p class="subtitle">Quantifying the Value of Discovered Patterns</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>📊 Objective Measures</h4>
+                        <p>Based on statistical properties of the pattern and data.</p>
+                        <ul>
+                            <li><strong>Support:</strong> How frequently an itemset appears.</li>
+                            <li><strong>Confidence:</strong> How often items in Y appear given items in X (for X -> Y rules).</li>
+                            <li><strong>Lift:</strong> How much more likely Y is given X, relative to Y's overall probability.</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h4>🤔 Subjective Measures</h4>
+                        <p>Based on human perception and domain knowledge.</p>
+                        <ul>
+                            <li><strong>Novelty:</strong> Is the pattern new or surprising to the user?</li>
+                            <li><strong>Utility:</strong> Is the pattern actionable or useful for decision-making?</li>
+                            <li><strong>Actionability:</strong> Can the insights be directly translated into business actions?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <p>A pattern might be statistically significant but not interesting, or vice versa. Both objective and subjective measures are crucial.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Presentation Format & Demo -->
+        <div class="slide" id="slide8">
+            <div class="slide-number">8/12</div>
+            <div class="content">
+                <h2>Presentation Format & Demo</h2>
+                <p class="subtitle">Making Discovered Knowledge Understandable and Usable</p>
+                <div class="interactive-demo">
+                    <div class="demo-tabs" id="formatDemoTabs">
+                        <div class="demo-tab active" data-tab="rule">Association Rule</div>
+                        <div class="demo-tab" data-tab="tree">Decision Tree Snippet</div>
+                        <div class="demo-tab" data-tab="report">Report Excerpt</div>
+                    </div>
+                    <div class="demo-content active" data-content="rule">
+                        <p>Example: Association Rule</p>
+                        <pre><code>{Milk, Bread} -> {Eggs} (Support: 0.15, Confidence: 0.70, Lift: 1.2)</code></pre>
+                        <p>Interpretation: 15% of transactions contain Milk and Bread. Of those, 70% also contain Eggs. Eggs are 1.2 times more likely to be bought when Milk and Bread are bought.</p>
+                    </div>
+                    <div class="demo-content" data-content="tree">
+                        <p>Example: Decision Tree Snippet</p>
+                        <pre><code>IF (Age <= 30) AND (Income > 50000) THEN Customer_Segment = 'Young Affluent'
+ELSE IF (Marital_Status = 'Married') AND (Children > 0) THEN Customer_Segment = 'Family'
+ELSE ...</code></pre>
+                        <p>Interpretation: A hierarchical set of rules to classify customers into segments.</p>
+                    </div>
+                    <div class="demo-content" data-content="report">
+                        <p>Example: Report Excerpt</p>
+                        <pre><code>Executive Summary:
+Our analysis reveals three distinct customer segments: 'Budget Shoppers', 'Premium Buyers', and 'Occasional Visitors'. 'Premium Buyers' show a strong preference for organic produce and gourmet items, contributing 40% to total revenue despite being only 15% of the customer base. Recommendations include targeted marketing for organic products to this segment.</code></pre>
+                        <p>Interpretation: A summarized, actionable insight for business stakeholders.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Integration Challenges - Overview -->
+        <div class="slide" id="slide9">
+            <div class="slide-number">9/12</div>
+            <div class="content">
+                <h2>Integration Challenges</h2>
+                <p class="subtitle">Bridging the Gap Between Data Mining and Business Operations</p>
+                <div class="interactive-demo">
+                    <p>Real-world data mining systems are rarely standalone. They need to integrate with existing enterprise infrastructure.</p>
+                    <p>Key challenges include:</p>
+                    <ul style="margin-top: 15px;">
+                        <li><span class="highlight">Data access and security</span></li>
+                        <li><span class="highlight">Scalability considerations</span></li>
+                        <li><span class="highlight">Real-time vs. batch processing</span></li>
+                        <li><span class="highlight">Deployment and maintenance (MLOps)</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Data Access & Security (with Hands-on Prompt) -->
+        <div class="slide" id="slide10">
+            <div class="slide-number">10/12</div>
+            <div class="content">
+                <h2>Data Access and Security</h2>
+                <p class="subtitle">Ensuring Data Availability and Protection</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>🧩 Heterogeneous Data Sources</h4>
+                        <p>Data often resides in various systems: relational databases, data warehouses, NoSQL databases, cloud storage, streaming feeds.</p>
+                        <p>Challenge: Unifying data from disparate sources for analysis.</p>
+                    </div>
+                    <div class="card">
+                        <h4>🔒 Access Control and Compliance</h4>
+                        <p>Implementing granular access permissions for data miners.</p>
+                        <p>Adhering to regulations like GDPR, HIPAA, CCPA for data privacy and governance.</p>
+                        <p>Challenge: Balancing data accessibility with strict security requirements.</p>
+                    </div>
+                </div>
+                <div class="interactive-demo">
+                    <h3>Hands-on Prompt: Data Security Scenario</h3>
+                    <p>Imagine you are building a data mining system for a healthcare provider. What are <strong>two key security measures</strong> you would implement to protect patient data while still allowing analysts to discover patterns?</p>
+                    <ul style="margin-top: 10px;">
+                        <li>Think about data anonymization/pseudonymization.</li>
+                        <li>Consider access control mechanisms.</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-style: italic;">(This is a thought exercise; no input required in the slide itself.)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Scalability & Processing & Quiz -->
+        <div class="slide" id="slide11">
+            <div class="slide-number">11/12</div>
+            <div class="content">
+                <h2>Scalability & Processing</h2>
+                <p class="subtitle">Handling Growing Data Volumes and Varying Latency Needs</p>
+                <div class="card-grid">
+                    <div class="card">
+                        <h4>📈 Scalability Considerations</h4>
+                        <p><strong>Volume:</strong> Processing petabytes of data.</p>
+                        <p><strong>Velocity:</strong> Handling high-speed data streams.</p>
+                        <p><strong>Variety:</strong> Integrating structured, semi-structured, and unstructured data.</p>
+                        <p>Challenge: Designing systems that can grow with data demands.</p>
+                    </div>
+                    <div class="card">
+                        <h4>⏱️ Real-time vs. Batch Processing</h4>
+                        <p><strong>Batch:</strong> Periodic processing of large data sets (e.g., monthly sales reports, overnight model retraining).</p>
+                        <p><strong>Real-time:</strong> Processing data as it arrives, with low latency (e.g., fraud detection, personalized recommendations).</p>
+                        <p>Challenge: Choosing the appropriate processing paradigm based on business needs.</p>
+                    </div>
+                </div>
+                <div class="quiz-container" style="margin-top: 30px;">
+                    <div class="question">A retail company needs to update its customer segmentation model daily based on new purchase data. Which processing approach is most suitable for this task?</div>
+                    <div class="options" id="quiz2Options">
+                        <div class="option" data-answer="a">A) Pure real-time streaming</div>
+                        <div class="option" data-answer="b">B) Batch processing</div>
+                        <div class="option" data-answer="c">C) Manual data entry</div>
+                        <div class="option" data-answer="d">D) One-time analysis</div>
+                    </div>
+                    <div id="quiz2Feedback" style="display: none; margin-top: 20px; padding: 15px; border-radius: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 12: Case Study & Key Takeaways -->
+        <div class="slide" id="slide12">
+            <div class="slide-number">12/12</div>
+            <div class="content">
+                <h2>Case Study: E-commerce Recommendations & Takeaways</h2>
+                <p class="subtitle">Integrating Data Mining for Personalized User Experience</p>
+                <div class="architecture-diagram">
+                    <div class="step">User Browses Website</div>
+                    <div class="arrow">↓</div>
+                    <div class="component">Web Server / Application Layer</div>
+                    <div class="arrow">↓</div>
+                    <div class="step">Real-time Data Capture (Clicks, Views, Purchases)</div>
+                    <div class="arrow">↓</div>
+                    <div class="component">Streaming Platform (e.g., Kafka)</div>
+                    <div class="arrow">↓</div>
+                    <div class="step">Real-time Feature Engineering & Model Inference</div>
+                    <div class="arrow">↓</div>
+                    <div class="component">Recommendation Engine (e.g., Spark Streaming + MLlib)</div>
+                    <div class="arrow">↓</div>
+                    <div class="step">Personalized Recommendations Displayed</div>
+                    <div class="arrow">↓</div>
+                    <div class="component">Data Warehouse (Historical Data for Batch Retraining)</div>
+                    <div class="arrow">↑ (Batch Model Retraining)</div>
+                    <div class="component">Offline Model Training (e.g., Hadoop, Cloud ML)</div>
+                </div>
+                <div class="interactive-demo" style="margin-top: 30px;">
+                    <p><strong>Case Study Summary:</strong> This architecture combines real-time data processing for immediate recommendations with batch processing for robust model retraining, essential for dynamic e-commerce environments.</p>
+                    <h3>Key Takeaways</h3>
+                    <ul style="margin-top: 10px;">
+                        <li>🎯 Define your data mining task precisely using primitives.</li>
+                        <li>🔗 Seamless integration is vital for real-world systems.</li>
+                        <li>⚖️ Balance scalability, security, and processing needs.</li>
+                        <li>🚀 Adopt an end-to-end view for robust system design.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 12; // Updated total slides
+        let timeRemaining = 20 * 60; // 20 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = "00:00";
+                    // Optionally, add an alert or visual cue that time is up
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 20 * 60;
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Quiz functionality
+        function setupQuiz(quizId, correctAnswer, explanation) {
+            const options = document.querySelectorAll(`#${quizId}Options .option`);
+            const feedback = document.getElementById(`${quizId}Feedback`);
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selections
+                    options.forEach(opt => {
+                        opt.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    
+                    // Mark selected option
+                    this.classList.add('selected');
+                    
+                    // Show correct answer after 500ms
+                    setTimeout(() => {
+                        options.forEach(opt => {
+                            if (opt.dataset.answer === correctAnswer) {
+                                opt.classList.add('correct');
+                            } else {
+                                opt.classList.add('incorrect');
+                            }
+                        });
+
+                        feedback.textContent = explanation;
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#222';
+                        feedback.style.border = '2px solid #60efff';
+                        feedback.style.color = '#fff';
+                    }, 500);
+                });
+            });
+        }
+
+        // Demo tabs functionality
+        function setupDemoTabs(tabsId) {
+            const tabs = document.querySelectorAll(`#${tabsId} .demo-tab`);
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function () {
+                    const target = tab.dataset.tab;
+                    const parentDemo = tab.closest('.interactive-demo');
+                    const contents = parentDemo.querySelectorAll('.demo-content');
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    parentDemo.querySelector(`.demo-content[data-content="${target}"]`).classList.add('active');
+                });
+            });
+        }
+
+
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide); // Show the first slide
+            startTimer(); // Start the timer
+
+            // Setup quizzes
+            setupQuiz('quiz1', 'c', '✅ Clustering is ideal for grouping similar data points without predefined categories.');
+            setupQuiz('quiz2', 'b', '✅ Batch processing is suitable for daily updates of large datasets where immediate real-time response is not critical.');
+
+            // Setup demo tabs
+            setupDemoTabs('formatDemoTabs');
+        });
+    </script>
+</body>
+</html>
