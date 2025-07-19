@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concept Hierarchy Generation – 4-Minute Session</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); /* Subtle blue-grey gradient */
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #A7D9F0, #7FB3D5); /* Light blue gradient */
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #7FB3D5; /* Slightly darker blue */
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .card h4 {
+            font-size: 1.5em;
+            color: #A7D9F0; /* Light blue */
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #63B3ED, #4299E1); /* Soft blue gradient */
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(167, 217, 240, 0.3) 0%, rgba(167, 217, 240, 0.1) 100%); /* Light blue highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Concept Hierarchy Generation</h3>
+            <div class="timer" id="timer">04:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/6</div>
+            <div class="content">
+                <h1>Concept Hierarchy Generation (4 minutes)</h1>
+                <p class="subtitle">Organizing Data from Detail to General</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 4 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Categorical, Numerical, and Domain-Specific Hierarchies</p>
+                    <p>🚀 <strong>Focus:</strong> Making data easier to understand and analyze</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is a Concept Hierarchy? -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/6</div>
+            <div class="content">
+                <h2>✅ What is a Concept Hierarchy?</h2>
+                <p class="subtitle">Levels of Detail in Your Data</p>
+                <div class="interactive-demo">
+                    <p>A concept hierarchy organizes values in levels — from detailed to general.</p>
+                    <h3 style="margin-top: 20px;">It helps in:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">📊</span> Data summarization</li>
+                        <li><span class="emoji"> grouping</span></li>
+                        <li><span class="emoji">✨</span> Making patterns easier to spot</li>
+                    </ul>
+                    <p style="margin-top: 20px;">Think of it like organizing files into folders:</p>
+                    <p style="font-size: 1.2em; font-weight: bold; margin-top: 10px;">File → Subfolder → Folder → Drive</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Creating Categorical Hierarchies -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/6</div>
+            <div class="content">
+                <h2>1️⃣ Creating Categorical Hierarchies</h2>
+                <p class="subtitle">Natural Groupings in Text Data</p>
+                <div class="interactive-demo">
+                    <p>Some columns have natural levels or groups.</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Location</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">City → State → Country</p>
+                    <p style="margin-left: 20px; opacity: 0.8;">Ex: “Kochi” → “Kerala” → “India”</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Product Category</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Mobile → Electronics → Consumer Goods</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Employee Role</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Intern → Associate → Manager → Director</p>
+                    <p style="margin-top: 20px;">We can <span class="highlight">roll up</span> (go more general) or <span class="highlight">drill down</span> (go more detailed).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Numerical Value Ranges -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/6</div>
+            <div class="content">
+                <h2>2️⃣ Numerical Value Ranges</h2>
+                <p class="subtitle">Converting Numbers into Meaningful Groups</p>
+                <div class="interactive-demo">
+                    <p>We can also convert numbers into levels by using ranges.</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Age</h3>
+                    <ul style="margin-top: 15px;">
+                        <li>0–12 → Child</li>
+                        <li>13–19 → Teen</li>
+                        <li>20–35 → Young Adult</li>
+                        <li>36–60 → Adult</li>
+                        <li>60+ → Senior</li>
+                    </ul>
+                    <p style="margin-top: 20px;">This is useful for simplification and visualization.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Domain-Specific Hierarchies -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/6</div>
+            <div class="content">
+                <h2>3️⃣ Domain-Specific Hierarchies</h2>
+                <p class="subtitle">Custom Groupings for Specific Industries</p>
+                <div class="interactive-demo">
+                    <p>Different industries have different ways of grouping things.</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Education</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Marks → Grade → GPA</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Healthcare</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Symptoms → Diagnosis → Condition Group</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> Example: Banking</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Transaction Type → Category → Risk Level</p>
+                    <p style="margin-top: 20px;">These are custom hierarchies based on expert knowledge in the field.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Summary -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/6</div>
+            <div class="content">
+                <h2>📌 Summary</h2>
+                <p class="subtitle">Key Takeaways for Concept Hierarchies</p>
+                <div class="interactive-demo">
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">📦</span> Concept hierarchies group detailed data into higher-level concepts</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🔠</span> Categorical = Text-based levels (like City → Country)</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🔢</span> Numerical = Range-based grouping (like Age Groups)</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🧑‍🔬</span> Domain-specific = Based on industry rules or logic</li>
+                    </ul>
+                    <p style="margin-top: 30px; font-size: 1.2em; font-weight: bold;">They're super helpful for summarizing, visualizing, and analyzing data!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6; // Total slides for this presentation
+        let timeRemaining = 4 * 60; // 4 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = "00:00";
+                    // Optionally, add a visual cue that time is up
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 4 * 60; // Total time for this presentation
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+            // Update slide number display
+            document.querySelector(`#slide${n} .slide-number`).textContent = `${n}/${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide); // Show the first slide
+            startTimer(); // Start the timer
+        });
+    </script>
+</body>
+</html>

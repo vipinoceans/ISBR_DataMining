@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Hierarchy Explorer Game</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: #333;
+        }
+
+        /* Game Container Styling */
+        #gameContainer {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 700px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #a7c5eb;
+        }
+
+        /* Titles and Headings */
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 .icon {
+            margin-right: 15px;
+            color: #3498db;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* Buttons */
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Specific button colors */
+        .btn-green {
+            background-color: #2ecc71;
+        }
+        .btn-green:hover {
+            background-color: #27ae60;
+        }
+        .btn-red {
+            background-color: #e74c3c;
+        }
+        .btn-red:hover {
+            background-color: #c0392b;
+        }
+        .btn-purple {
+            background-color: #9b59b6;
+        }
+        .btn-purple:hover {
+            background-color: #8e44ad;
+        }
+
+        /* Game Screens */
+        #startScreen, #gameScreen, #endScreen {
+            transition: opacity 0.5s ease;
+        }
+
+        #gameScreen {
+            display: none; /* Hidden by default */
+        }
+
+        #endScreen {
+            display: none; /* Hidden by default */
+        }
+
+        /* Score Display */
+        #scoreDisplay {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            background-color: #ecf0f1;
+            padding: 10px 20px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Question Area */
+        #questionArea {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #34495e;
+            margin-bottom: 30px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Options Area */
+        #optionsArea {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 500px) {
+            #optionsArea {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Feedback Area */
+        #feedbackArea {
+            font-size: 1.3em;
+            font-weight: bold;
+            min-height: 40px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            padding: 10px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .feedback-correct {
+            color: #27ae60;
+            background-color: #e6f7ee;
+        }
+
+        .feedback-incorrect {
+            color: #c0392b;
+            background-color: #fbe9e7;
+        }
+
+        /* Next Question Button */
+        #nextQuestionBtn {
+            margin-top: 20px;
+        }
+
+        /* End Screen Styling */
+        #finalScore {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        #endScreen p {
+            font-size: 1.2em;
+        }
+
+        /* Confetti effect (simple visual for correct answer) */
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f06; /* Pink */
+            opacity: 0;
+            animation: confetti-fall 2s forwards;
+            border-radius: 50%;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(calc(100vh + 100px)) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <!-- Start Screen -->
+        <div id="startScreen">
+            <h1><i class="fas fa-sitemap icon"></i> Data Hierarchy Explorer Game</h1>
+            <p>Welcome, young explorer! Learn how data is organized into groups and sub-groups with these challenges:</p>
+            <button class="btn btn-green" onclick="startGame('location')">
+                <i class="fas fa-map-marked-alt"></i> Location Hierarchy Challenge
+            </button>
+            <button class="btn btn-purple" onclick="startGame('age')">
+                <i class="fas fa-users"></i> Age Grouping Challenge
+            </button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen">
+            <div id="scoreDisplay">Score: 0</div>
+            <div id="questionArea"></div>
+            <div id="optionsArea"></div>
+            <div id="feedbackArea"></div>
+            <button id="nextQuestionBtn" class="btn btn-blue" style="display: none;">Next Question <i class="fas fa-arrow-right"></i></button>
+        </div>
+
+        <!-- End Screen -->
+        <div id="endScreen">
+            <h2>Game Over!</h2>
+            <p>You've completed the challenge!</p>
+            <div id="finalScore"></div>
+            <button class="btn btn-red" onclick="restartGame()">Play Again! <i class="fas fa-redo"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Game state variables
+        let currentScore = 0;
+        let currentQuestionIndex = 0;
+        let gameType = ''; // 'location' or 'age'
+        const MAX_QUESTIONS = 5; // Number of questions per game round
+
+        // DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const endScreen = document.getElementById('endScreen');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const questionArea = document.getElementById('questionArea');
+        const optionsArea = document.getElementById('optionsArea');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const nextQuestionBtn = document.getElementById('nextQuestionBtn');
+        const finalScoreDisplay = document.getElementById('finalScore');
+
+        // Data for Location Challenge (Country -> State -> City hierarchy)
+        const locations = {
+            "India": {
+                "Kerala": ["Kochi", "Trivandrum", "Kozhikode"],
+                "Karnataka": ["Bangalore", "Mysore"],
+                "Maharashtra": ["Mumbai", "Pune", "Nagpur"], // Added more data for variety
+                "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai"] // Added more data for variety
+            }
+        };
+
+        // Age group definitions (a form of classification/grouping)
+        const ageGroups = [
+            { name: "Child (0-12)", min: 0, max: 12 },
+            { name: "Teen (13-19)", min: 13, max: 19 },
+            { name: "Young Adult (20-35)", min: 20, max: 35 },
+            { name: "Adult (36-60)", min: 36, max: 60 },
+            { name: "Senior (61+)", min: 61, max: 120 } // Assuming max age for classification
+        ];
+
+        // Event Listeners
+        nextQuestionBtn.addEventListener('click', generateQuestion);
+
+        /**
+         * Initializes and starts a new game round.
+         * @param {string} type - The type of game to start ('location' or 'age').
+         */
+        function startGame(type) {
+            gameType = type;
+            currentScore = 0;
+            currentQuestionIndex = 0;
+            scoreDisplay.textContent = `Score: ${currentScore}`;
+            feedbackArea.textContent = '';
+            nextQuestionBtn.style.display = 'none';
+
+            // Hide start screen, show game screen
+            startScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            endScreen.style.display = 'none';
+
+            generateQuestion(); // Generate the first question
+        }
+
+        /**
+         * Restarts the game by showing the start screen.
+         */
+        function restartGame() {
+            endScreen.style.display = 'none';
+            startScreen.style.display = 'block';
+        }
+
+        /**
+         * Generates a new question based on the current game type.
+         */
+        function generateQuestion() {
+            if (currentQuestionIndex >= MAX_QUESTIONS) {
+                endGame();
+                return;
+            }
+
+            // Clear previous feedback and options
+            feedbackArea.textContent = '';
+            feedbackArea.classList.remove('feedback-correct', 'feedback-incorrect');
+            optionsArea.innerHTML = '';
+            nextQuestionBtn.style.display = 'none';
+
+            let question = '';
+            let correctAnswer = '';
+            let options = [];
+
+            if (gameType === 'location') {
+                // Generate Location Challenge question
+                const questionTypes = ['cityToState', 'stateToCity'];
+                const selectedQuestionType = questionTypes[Math.floor(Math.random() * questionTypes.length)];
+
+                // Get all states and cities for question generation
+                const allStates = Object.keys(locations.India);
+                let allCities = [];
+                for (const state of allStates) {
+                    allCities = allCities.concat(locations.India[state]);
+                }
+
+                if (selectedQuestionType === 'cityToState') {
+                    // Pick a random state
+                    const randomStateName = allStates[Math.floor(Math.random() * allStates.length)];
+                    const citiesInState = locations.India[randomStateName];
+
+                    // Pick a random city from that state
+                    const randomCity = citiesInState[Math.floor(Math.random() * citiesInState.length)];
+
+                    question = `Which state is "${randomCity}" a part of?`; // Emphasize "part of" for hierarchy
+                    correctAnswer = randomStateName;
+
+                    // Generate options (correct answer + 3 random other states)
+                    options.push(correctAnswer);
+                    let otherStates = allStates.filter(s => s !== correctAnswer);
+                    while (options.length < 4 && otherStates.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * otherStates.length);
+                        options.push(otherStates[randomIndex]);
+                        otherStates.splice(randomIndex, 1); // Remove to avoid duplicates
+                    }
+                } else if (selectedQuestionType === 'stateToCity') {
+                    // Pick a random state
+                    const randomStateName = allStates[Math.floor(Math.random() * allStates.length)];
+                    const citiesInState = locations.India[randomStateName];
+
+                    // Pick a random city from that state as the correct answer
+                    const randomCity = citiesInState[Math.floor(Math.random() * citiesInState.length)];
+
+                    question = `Which of these cities belongs to "${randomStateName}"?`; // Emphasize "belongs to" for hierarchy
+                    correctAnswer = randomCity;
+
+                    // Generate options (correct answer + 3 random other cities from other states)
+                    options.push(correctAnswer);
+                    let otherCitiesForDistractors = allCities.filter(city => city !== correctAnswer);
+
+                    // Shuffle otherCitiesForDistractors to pick random distractors
+                    otherCitiesForDistractors.sort(() => Math.random() - 0.5);
+
+                    while (options.length < 4 && otherCitiesForDistractors.length > 0) {
+                        if (!options.includes(otherCitiesForDistractors[0])) { // Ensure no duplicates
+                             options.push(otherCitiesForDistractors.shift());
+                        } else {
+                            otherCitiesForDistractors.shift(); // Just remove if it's a duplicate
+                        }
+                    }
+                }
+            } else if (gameType === 'age') {
+                // Generate Age Group Challenge question
+                const randomAge = Math.floor(Math.random() * 90) + 1; // Age between 1 and 90
+                question = `Into which age group does ${randomAge} fall?`; // Rephrased for grouping
+                correctAnswer = classifyAge(randomAge);
+
+                // Generate options (correct answer + 3 random other age groups)
+                options.push(correctAnswer);
+                let otherAgeGroups = ageGroups.map(group => group.name).filter(name => name !== correctAnswer);
+                while (options.length < 4 && otherAgeGroups.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * otherAgeGroups.length);
+                    options.push(otherAgeGroups[randomIndex]);
+                    otherAgeGroups.splice(randomIndex, 1);
+                }
+            }
+
+            // Shuffle options to randomize their order
+            options.sort(() => Math.random() - 0.5);
+
+            questionArea.textContent = question;
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('btn', 'btn-blue'); // Default button style
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, correctAnswer);
+                optionsArea.appendChild(button);
+            });
+
+            currentQuestionIndex++;
+        }
+
+        /**
+         * Classifies an age into its corresponding group.
+         * @param {number} age - The age to classify.
+         * @returns {string} The name of the age group.
+         */
+        function classifyAge(age) {
+            if (isNaN(age) || age < 0) {
+                return "Invalid Age";
+            }
+            for (const group of ageGroups) {
+                if (age >= group.min && age <= group.max) {
+                    return group.name;
+                }
+            }
+            return "Unknown"; // Should not happen with comprehensive ageGroups
+        }
+
+        /**
+         * Checks if the selected answer is correct and provides feedback.
+         * @param {string} selectedOption - The option chosen by the user.
+         * @param {string} correctAnswer - The correct answer for the current question.
+         */
+        function checkAnswer(selectedOption, correctAnswer) {
+            // Disable all option buttons after an answer is selected
+            Array.from(optionsArea.children).forEach(button => {
+                button.disabled = true;
+                if (button.textContent === correctAnswer) {
+                    button.style.backgroundColor = '#2ecc71'; // Green for correct
+                } else if (button.textContent === selectedOption) {
+                    button.style.backgroundColor = '#e74c3c'; // Red for incorrect selected
+                }
+            });
+
+            if (selectedOption === correctAnswer) {
+                currentScore++;
+                feedbackArea.textContent = 'Correct! 🎉';
+                feedbackArea.classList.add('feedback-correct');
+                feedbackArea.classList.remove('feedback-incorrect');
+                scoreDisplay.textContent = `Score: ${currentScore}`;
+                createConfetti(); // Visual feedback for correct answer
+            } else {
+                feedbackArea.textContent = `Incorrect. The correct answer was "${correctAnswer}".`;
+                feedbackArea.classList.add('feedback-incorrect');
+                feedbackArea.classList.remove('feedback-correct');
+            }
+            nextQuestionBtn.style.display = 'block'; // Show next question button
+        }
+
+        /**
+         * Ends the current game round and displays the final score.
+         */
+        function endGame() {
+            gameScreen.style.display = 'none';
+            endScreen.style.display = 'block';
+            finalScoreDisplay.textContent = `Your Final Score: ${currentScore} / ${MAX_QUESTIONS}`;
+        }
+
+        /**
+         * Creates a simple confetti effect for correct answers.
+         */
+        function createConfetti() {
+            const confettiContainer = document.createElement('div');
+            confettiContainer.classList.add('confetti-container');
+            document.getElementById('gameContainer').appendChild(confettiContainer);
+
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`; // Random color
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confettiContainer.appendChild(confetti);
+            }
+
+            // Remove confetti after animation
+            setTimeout(() => {
+                confettiContainer.remove();
+            }, 2000);
+        }
+
+        // Initialize the game on load (show start screen)
+        window.onload = () => {
+            startScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
+            endScreen.style.display = 'none';
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Cleaning – 10-Minute Session</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); /* Subtle blue-grey gradient */
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #A7D9F0, #7FB3D5); /* Light blue gradient */
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #7FB3D5; /* Slightly darker blue */
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .card h4 {
+            font-size: 1.5em;
+            color: #A7D9F0; /* Light blue */
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #63B3ED, #4299E1); /* Soft blue gradient */
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(167, 217, 240, 0.3) 0%, rgba(167, 217, 240, 0.1) 100%); /* Light blue highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Data Cleaning</h3>
+            <div class="timer" id="timer">10:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/6</div>
+            <div class="content">
+                <h1>Data Cleaning (10 minutes)</h1>
+                <p class="subtitle">The Most Important Step Before Analysis</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 10 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Missing Values, Noise, Inconsistencies</p>
+                    <p>🚀 <strong>Focus:</strong> Practical techniques for cleaner data</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Handling Missing Values -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/6</div>
+            <div class="content">
+                <h2>🔍 1. Handling Missing Values</h2>
+                <p class="subtitle">Real-world data often has blanks</p>
+                <div class="interactive-demo">
+                    <p>Like someone forgot to fill in their age or salary.</p>
+                    <h3 style="margin-top: 20px;">✅ Techniques:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li><strong>Deletion:</strong>
+                            <p style="margin-left: 20px; opacity: 0.8;">If only a few entries are missing, we can remove those rows or columns.</p>
+                            <p style="margin-left: 20px; opacity: 0.8;">Example: If 2 out of 100 records are blank, we can safely delete them.</p>
+                        </li>
+                        <li style="margin-top: 15px;"><strong>Imputation (Filling in):</strong>
+                            <p style="margin-left: 20px; opacity: 0.8;">Replace missing values with something sensible:</p>
+                            <ul style="margin-left: 40px; opacity: 0.8;">
+                                <li>Mean (average)</li>
+                                <li>Median (middle value)</li>
+                                <li>Mode (most frequent value)</li>
+                            </ul>
+                            <p style="margin-left: 20px; opacity: 0.8;">Example: If age is missing, use the average age of others.</p>
+                        </li>
+                        <li style="margin-top: 15px;"><strong>Prediction:</strong>
+                            <p style="margin-left: 20px; opacity: 0.8;">Use other data to guess the missing value.</p>
+                            <p style="margin-left: 20px; opacity: 0.8;">Example: If we know a person’s department and experience, we can estimate their salary.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Noise Reduction & Outlier Detection -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/6</div>
+            <div class="content">
+                <h2>🔊 2. Noise Reduction & Outlier Detection</h2>
+                <p class="subtitle">Dealing with Errors and Extremes</p>
+                <div class="interactive-demo">
+                    <p><span class="highlight">Noise</span> = random errors or strange characters</p>
+                    <p style="margin-top: 10px;"><span class="highlight">Outliers</span> = values that are too far from the rest</p>
+                    <h3 style="margin-top: 20px;">🔧 Techniques:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li><strong>Noise reduction:</strong>
+                            <p style="margin-left: 20px; opacity: 0.8;">Clean spelling mistakes, symbols, or typos.</p>
+                            <p style="margin-left: 20px; opacity: 0.8;">Example: “HRR” instead of “HR”, “Sal@ry” instead of “Salary”</p>
+                        </li>
+                        <li style="margin-top: 15px;"><strong>Outlier detection:</strong>
+                            <p style="margin-left: 20px; opacity: 0.8;">Use IQR or Z-score to find values that don’t fit the pattern.</p>
+                            <p style="margin-left: 20px; opacity: 0.8;">Example: If everyone earns ₹50,000–₹70,000 and one person earns ₹10,00,000 — that’s an outlier.</p>
+                            <p style="margin-left: 20px; opacity: 0.8;">Depending on the case, we can remove or treat those values differently.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Inconsistent Data Correction -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/6</div>
+            <div class="content">
+                <h2>🌀 3. Inconsistent Data Correction</h2>
+                <p class="subtitle">Standardizing Varied Entries</p>
+                <div class="interactive-demo">
+                    <p>Sometimes, the same thing is written in different ways.</p>
+                    <h3 style="margin-top: 20px;">🧹 Example problems:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li>“Yes”, “Y”, “yes”, “1” → all mean the same</li>
+                        <li>Dates like 12/01/2023, 2023-01-12, 01-12-23</li>
+                    </ul>
+                    <h3 style="margin-top: 20px;">✅ Solution:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li>Standardize the format</li>
+                        <li>Convert all yes/no to 1/0</li>
+                        <li>Convert all dates to one standard format like YYYY-MM-DD</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Summary -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/6</div>
+            <div class="content">
+                <h2>✅ Summary</h2>
+                <p class="subtitle">Key Takeaways for Data Cleaning</p>
+                <div class="interactive-demo">
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">✨</span> Clean data is the starting point for great insights.</li>
+                        <li style="margin-top: 15px;"><span class="emoji">💡</span> Handle missing values smartly.</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🚫</span> Remove weird noise or extreme values.</li>
+                        <li style="margin-top: 15px;"><span class="emoji">📏</span> Fix formatting and inconsistencies.</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🚀</span> Once data is clean, we’re ready for the next steps like scaling and transformation!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Wrap-Up & Questions -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/6</div>
+            <div class="content">
+                <h2>Wrap-Up & Questions</h2>
+                <p class="subtitle">Your Thoughts and Queries</p>
+                <div class="interactive-demo">
+                    <p style="font-size: 1.5em; font-weight: bold;"><span class="emoji">🍳</span> Cleaning data is like preparing ingredients before cooking!</p>
+                    <p style="margin-top: 20px; font-size: 1.2em;">The better we clean, the better our machine learning model will be!</p>
+                    <p style="margin-top: 40px; font-size: 1.3em; color: #A7D9F0;">Now let’s hear from you –</p>
+                    <p style="margin-top: 10px; font-size: 1.3em; color: #A7D9F0;">What did you clean? What confused you?</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6; // Total slides for this presentation
+        let timeRemaining = 10 * 60; // 10 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = "00:00";
+                    // Optionally, add a visual cue that time is up
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 10 * 60; // Total time for this presentation
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+            // Update slide number display
+            document.querySelector(`#slide${n} .slide-number`).textContent = `${n}/${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide); // Show the first slide
+            startTimer(); // Start the timer
+        });
+    </script>
+</body>
+</html>

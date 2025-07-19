@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Transformation – 8-Minute Session</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); /* Subtle blue-grey gradient */
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #A7D9F0, #7FB3D5); /* Light blue gradient */
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #7FB3D5; /* Slightly darker blue */
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .card h4 {
+            font-size: 1.5em;
+            color: #A7D9F0; /* Light blue */
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #63B3ED, #4299E1); /* Soft blue gradient */
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(167, 217, 240, 0.3) 0%, rgba(167, 217, 240, 0.1) 100%); /* Light blue highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Data Transformation</h3>
+            <div class="timer" id="timer">08:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/6</div>
+            <div class="content">
+                <h1>Data Transformation (8 minutes)</h1>
+                <p class="subtitle">Making Your Data Model-Ready</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 8 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Normalization, Attribute Construction, Discretization</p>
+                    <p>🚀 <strong>Focus:</strong> Optimizing data for machine learning</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: What is Data Transformation? -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/6</div>
+            <div class="content">
+                <h2>✅ What is Data Transformation?</h2>
+                <p class="subtitle">Changing Data for Better Use</p>
+                <div class="interactive-demo">
+                    <p>Data transformation means changing the format, values, or structure of your data to make it more useful or understandable — especially for machine learning.</p>
+                    <p style="margin-top: 20px;"><span class="emoji">🍅🥕🔪</span> Think of it like prepping veggies before cooking: chopping, peeling, portioning = transformation</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Normalization & Standardization -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/6</div>
+            <div class="content">
+                <h2>1️⃣ Normalization & Standardization</h2>
+                <p class="subtitle">Bringing Numbers to a Common Scale</p>
+                <div class="interactive-demo">
+                    <p>When your data has numbers in different ranges, it can confuse your model.</p>
+                    <h3 style="margin-top: 20px;">✅ Normalization:</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Brings all values into a 0 to 1 range</p>
+                    <p style="margin-left: 20px; opacity: 0.8;">Example: If one person has ₹50,000 salary and another ₹5,00,000 — normalize to a common scale</p>
+                    <p class="formula">Normalized value = (x - min(x)) / (max(x) - min(x))</p>
+                    <h3 style="margin-top: 20px;">✅ Standardization:</h3>
+                    <p style="margin-left: 20px; opacity: 0.8;">Makes data have mean = 0 and standard deviation = 1</p>
+                    <p style="margin-left: 20px; opacity: 0.8;">Good when data has negative values or outliers</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Attribute Construction & Selection -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/6</div>
+            <div class="content">
+                <h2>2️⃣ Attribute Construction & Selection</h2>
+                <p class="subtitle">Smartly Building and Filtering Columns</p>
+                <div class="interactive-demo">
+                    <h3 style="margin-top: 10px;"><span class="emoji">🏗️</span> Attribute Construction:</h3>
+                    <p style="margin-top: 10px;">Create new columns from existing ones to make data more meaningful</p>
+                    <p style="margin-top: 10px;">Example:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>From “Date of Birth” → create “Age”</li>
+                        <li>From “TotalMarks” and “Subjects” → create “Average Marks”</li>
+                    </ul>
+                    <h3 style="margin-top: 25px;"><span class="emoji">🔍</span> Attribute Selection:</h3>
+                    <p style="margin-top: 10px;">Pick only the useful columns</p>
+                    <p style="margin-top: 10px;">Remove the ones that don’t help or confuse the model</p>
+                    <p style="margin-top: 10px;">Example:</p>
+                    <p style="margin-left: 20px;">Drop columns like “Employee ID” in prediction tasks, because it doesn’t affect the output</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Discretization of Continuous Variables -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/6</div>
+            <div class="content">
+                <h2>3️⃣ Discretization of Continuous Variables</h2>
+                <p class="subtitle">Turning Numbers into Categories</p>
+                <div class="interactive-demo">
+                    <p>Sometimes, it’s better to convert continuous numbers into categories.</p>
+                    <p style="margin-top: 15px;">Example:</p>
+                    <ul style="margin-left: 20px;">
+                        <li>Age (as number) → Age Group (Teen, Adult, Senior)</li>
+                        <li>Salary → Low, Medium, High</li>
+                    </ul>
+                    <p style="margin-top: 20px;">This helps simplify models and make data more interpretable.</p>
+                    <h3 style="margin-top: 25px;">🛠 Done using:</h3>
+                    <ul style="margin-top: 10px;">
+                        <li>Binning</li>
+                        <li>Quantiles</li>
+                        <li>Or setting custom ranges</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Recap -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/6</div>
+            <div class="content">
+                <h2>🧠 Recap:</h2>
+                <p class="subtitle">Key Takeaways for Data Transformation</p>
+                <div class="interactive-demo">
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">⚖️</span> Normalize & standardize = bring values to a common scale</li>
+                        <li style="margin-top: 15px;"><span class="emoji">🏗️</span> Construct/Select attributes = smartly build and filter columns</li>
+                        <li style="margin-top: 15px;"><span class="emoji">📦</span> Discretize = turn numbers into buckets or categories</li>
+                    </ul>
+                    <p style="margin-top: 40px; font-size: 1.2em; font-weight: bold;">These steps make your data more model-friendly and easy to understand!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6; // Total slides for this presentation
+        let timeRemaining = 8 * 60; // 8 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = "00:00";
+                    // Optionally, add a visual cue that time is up
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 8 * 60; // Total time for this presentation
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+            // Update slide number display
+            document.querySelector(`#slide${n} .slide-number`).textContent = `${n}/${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide); // Show the first slide
+            startTimer(); // Start the timer
+        });
+    </script>
+</body>
+</html>

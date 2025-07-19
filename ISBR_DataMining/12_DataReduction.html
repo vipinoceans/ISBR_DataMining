@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Reduction – 5-Minute Session</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); /* Subtle blue-grey gradient */
+            overflow: hidden;
+            color: white;
+        }
+
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .timer {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #A7D9F0, #7FB3D5); /* Light blue gradient */
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide {
+            flex: 1;
+            display: none;
+            padding: 40px;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #A7D9F0; /* Light blue */
+        }
+
+        h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #7FB3D5; /* Slightly darker blue */
+        }
+
+        .content {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .card h4 {
+            font-size: 1.5em;
+            color: #A7D9F0; /* Light blue */
+            margin-bottom: 15px;
+        }
+
+        .card ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #63B3ED, #4299E1); /* Soft blue gradient */
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .interactive-demo {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(167, 217, 240, 0.3) 0%, rgba(167, 217, 240, 0.1) 100%); /* Light blue highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        /* Quiz specific styles */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            max-width: 800px;
+            margin: 20px auto;
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-align: left;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            border-color: #7FB3D5; /* Complementary blue */
+            background: rgba(127, 179, 213, 0.3);
+        }
+
+        .option.correct {
+            border-color: #81C784; /* Soft green */
+            background: rgba(129, 199, 132, 0.3);
+        }
+
+        .option.incorrect {
+            border-color: #EF5350; /* Soft red */
+            background: rgba(239, 83, 80, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h3>Data Reduction</h3>
+            <div class="timer" id="timer">05:00</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active" id="slide1">
+            <div class="slide-number">1/6</div>
+            <div class="content">
+                <h1>Data Reduction (5 minutes)</h1>
+                <p class="subtitle">Making Your Data More Efficient</p>
+                <div style="margin-top: 40px;">
+                    <p>🎯 <strong>Duration:</strong> 5 minutes</p>
+                    <p>📊 <strong>Topics:</strong> Dimensionality, Sampling, Compression</p>
+                    <p>🚀 <strong>Focus:</strong> Speeding up models and saving resources</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Why Reduce Data? -->
+        <div class="slide" id="slide2">
+            <div class="slide-number">2/6</div>
+            <div class="content">
+                <h2>✅ Why Reduce Data?</h2>
+                <p class="subtitle">Less Is Often More!</p>
+                <div class="interactive-demo">
+                    <p>Sometimes, datasets have too much information.</p>
+                    <p style="margin-top: 10px;">Not all of it is useful — and more data = more processing time.</p>
+                    <h3 style="margin-top: 20px;">Data reduction helps us:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">⏩</span> Speed up our models</li>
+                        <li><span class="emoji">📉</span> Remove noise</li>
+                        <li><span class="emoji">🎯</span> Focus on the most important variables</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Dimensionality Reduction (PCA Preview) -->
+        <div class="slide" id="slide3">
+            <div class="slide-number">3/6</div>
+            <div class="content">
+                <h2>1️⃣ Dimensionality Reduction (PCA Preview)</h2>
+                <p class="subtitle">Fewer Columns, Same Story</p>
+                <div class="interactive-demo">
+                    <p><strong>Problem:</strong></p>
+                    <p style="margin-left: 20px; opacity: 0.8;">A dataset may have 100+ columns (dimensions), but not all matter.</p>
+                    <p><strong>Solution:</strong></p>
+                    <p style="margin-left: 20px; opacity: 0.8;">We reduce dimensions by keeping only the most useful ones.</p>
+                    <h3 style="margin-top: 20px;"><span class="emoji">🧠</span> PCA (Principal Component Analysis):</h3>
+                    <p style="margin-top: 10px;">A technique that finds new “summary” columns (called principal components)</p>
+                    <p style="margin-top: 10px;">These components carry the most important patterns in the data</p>
+                    <p style="margin-top: 10px;">Think of it as: Summarizing a 300-page book into 3 pages, but keeping the core story</p>
+                    <p style="margin-top: 20px;">🛑 Don’t worry — we won’t do the math here. Just know PCA is like "smart summarization".</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Sampling Techniques -->
+        <div class="slide" id="slide4">
+            <div class="slide-number">4/6</div>
+            <div class="content">
+                <h2>2️⃣ Sampling Techniques</h2>
+                <p class="subtitle">Fewer Rows, Representative Data</p>
+                <div class="interactive-demo">
+                    <p>When datasets are huge, we don’t always need the entire thing.</p>
+                    <p style="margin-top: 10px;">Sampling = picking a smaller group that still represents the full data.</p>
+                    <h3 style="margin-top: 20px;">Types of sampling:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li><strong>Random Sampling:</strong> Pick rows randomly</li>
+                        <li><strong>Stratified Sampling:</strong> Ensure we maintain the same proportions (like 60% male, 40% female)</li>
+                        <li><strong>Systematic Sampling:</strong> Pick every nth record</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><span class="emoji">🎯</span> Goal: Save time while still keeping data meaningful</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Data Compression -->
+        <div class="slide" id="slide5">
+            <div class="slide-number">5/6</div>
+            <div class="content">
+                <h2>3️⃣ Data Compression</h2>
+                <p class="subtitle">Saving Space, Keeping Quality</p>
+                <div class="interactive-demo">
+                    <p>Sometimes, we can store the same data using less space.</p>
+                    <h3 style="margin-top: 20px;">Ways to compress:</h3>
+                    <ul style="margin-top: 15px;">
+                        <li>Encoding repeated patterns (like zip files)</li>
+                        <li>Reducing precision (like saving 3.141592653 as 3.14)</li>
+                    </ul>
+                    <p style="margin-top: 20px;"><span class="emoji">🧠</span> Helps when working with storage-heavy systems or limited bandwidth</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Recap & Mini Quiz -->
+        <div class="slide" id="slide6">
+            <div class="slide-number">6/6</div>
+            <div class="content">
+                <h2>🎯 Recap & Mini Quiz</h2>
+                <p class="subtitle">Test Your Knowledge!</p>
+                <div class="interactive-demo">
+                    <ul style="margin-top: 15px;">
+                        <li><span class="emoji">📊</span> PCA = Reduces number of columns, keeps patterns</li>
+                        <li><span class="emoji">⬇️</span> Sampling = Reduce number of rows</li>
+                        <li><span class="emoji">💾</span> Compression = Save storage without losing data quality</li>
+                    </ul>
+
+                    <h3 style="margin-top: 30px;">❓ Mini Quiz (Rapid Fire)</h3>
+                    <div class="quiz-container" style="margin-top: 20px;">
+                        <div class="question" id="quiz1Question">What does PCA do?</div>
+                        <div class="options" id="quiz1Options">
+                            <div class="option" data-answer="a">A) Adds new data</div>
+                            <div class="option" data-answer="b">B) Deletes all columns</div>
+                            <div class="option" data-answer="c">C) Creates summary columns from existing ones</div>
+                        </div>
+                        <div id="quiz1Feedback" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
+                    </div>
+
+                    <div class="quiz-container" style="margin-top: 20px;">
+                        <div class="question" id="quiz2Question">Which sampling technique ensures class balance is maintained?</div>
+                        <div class="options" id="quiz2Options">
+                            <div class="option" data-answer="a">A) Random Sampling</div>
+                            <div class="option" data-answer="b">B) Stratified Sampling</div>
+                            <div class="option" data-answer="c">C) Lucky Sampling</div>
+                        </div>
+                        <div id="quiz2Feedback" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
+                    </div>
+
+                    <div class="quiz-container" style="margin-top: 20px;">
+                        <div class="question" id="quiz3Question">Why do we compress data?</div>
+                        <div class="options" id="quiz3Options">
+                            <div class="option" data-answer="a">A) To corrupt it</div>
+                            <div class="option" data-answer="b">B) To save space</div>
+                            <div class="option" data-answer="c">C) To make it harder to read</div>
+                        </div>
+                        <div id="quiz3Feedback" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
+                    </div>
+
+                    <div class="quiz-container" style="margin-top: 20px;">
+                        <div class="question" id="quiz4Question">True or False: Sampling helps reduce model training time.</div>
+                        <div class="options" id="quiz4Options">
+                            <div class="option" data-answer="a">A) True</div>
+                            <div class="option" data-answer="b">B) False</div>
+                        </div>
+                        <div id="quiz4Feedback" style="display: none; margin-top: 10px; padding: 10px; border-radius: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="previousSlide()" id="prevBtn">← Previous</button>
+            <button class="btn" onclick="nextSlide()" id="nextBtn">Next →</button>
+            <button class="btn" onclick="toggleTimer()" id="timerBtn">⏸️ Pause</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 6; // Total slides for this presentation
+        let timeRemaining = 5 * 60; // 5 minutes in seconds
+        let timerInterval;
+        let isPaused = false;
+
+        // Timer functionality
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                if (!isPaused && timeRemaining > 0) {
+                    timeRemaining--;
+                    updateTimerDisplay();
+                    updateProgress();
+                } else if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').textContent = "00:00";
+                    // Optionally, add a visual cue that time is up
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgress() {
+            const totalTime = 5 * 60; // Total time for this presentation
+            const elapsed = totalTime - timeRemaining;
+            const progressPercent = (elapsed / totalTime) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+
+        function toggleTimer() {
+            isPaused = !isPaused;
+            const btn = document.getElementById('timerBtn');
+            btn.textContent = isPaused ? '▶️ Resume' : '⏸️ Pause';
+        }
+
+        // Slide navigation
+        function showSlide(n) {
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            document.getElementById(`slide${n}`).classList.add('active');
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = n === 1;
+            document.getElementById('nextBtn').disabled = n === totalSlides;
+            
+            currentSlide = n;
+            // Update slide number display
+            document.querySelector(`#slide${n} .slide-number`).textContent = `${n}/${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Quiz functionality
+        function setupQuiz(quizId, correctAnswer, explanation) {
+            const options = document.querySelectorAll(`#${quizId}Options .option`);
+            const feedback = document.getElementById(`${quizId}Feedback`);
+            
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove previous selections and feedback
+                    options.forEach(opt => {
+                        opt.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    feedback.style.display = 'none';
+                    
+                    // Mark selected option
+                    this.classList.add('selected');
+                    
+                    // Show correct answer after 500ms
+                    setTimeout(() => {
+                        options.forEach(opt => {
+                            if (opt.dataset.answer === correctAnswer) {
+                                opt.classList.add('correct');
+                            } else {
+                                opt.classList.add('incorrect');
+                            }
+                        });
+
+                        feedback.textContent = explanation;
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#222';
+                        feedback.style.border = '2px solid #7FB3D5'; /* Blue border */
+                        feedback.style.color = '#fff';
+                    }, 500);
+                });
+            });
+        }
+
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            showSlide(currentSlide); // Show the first slide
+            startTimer(); // Start the timer
+
+            // Setup quizzes
+            setupQuiz('quiz1', 'c', '✅ Creates summary columns from existing ones.');
+            setupQuiz('quiz2', 'b', '✅ Stratified Sampling maintains class balance.');
+            setupQuiz('quiz3', 'b', '✅ To save space.');
+            setupQuiz('quiz4', 'a', '✅ True.');
+        });
+    </script>
+</body>
+</html>

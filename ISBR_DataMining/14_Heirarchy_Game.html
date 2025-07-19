@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Concept Hierarchy Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+      background-color: #f4f7f6;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h2 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+    }
+
+    h2 svg {
+      margin-right: 10px;
+    }
+
+    /* Hierarchy Explorer */
+    .hierarchy-container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+      margin-bottom: 40px;
+    }
+
+    .hierarchy-item {
+      margin-bottom: 10px;
+    }
+
+    .clickable {
+      color: #3498db;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      transition: color 0.3s ease;
+    }
+
+    .clickable:hover {
+      color: #2980b9;
+    }
+
+    .clickable .icon {
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .level {
+      margin-left: 25px;
+      border-left: 2px solid #ecf0f1;
+      padding-left: 15px;
+      display: none; /* Hidden by default */
+    }
+
+    .level.expanded > .clickable .icon {
+      transform: rotate(90deg);
+    }
+
+    .level p {
+      margin: 5px 0;
+      padding: 4px 0;
+      color: #555;
+    }
+
+    /* Age Group Classifier */
+    .classifier-container {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      padding: 25px;
+    }
+
+    #ageInput {
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+      width: 200px;
+      margin-right: 10px;
+      transition: border-color 0.3s ease;
+    }
+
+    #ageInput:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 25px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #2c3e50;
+      background-color: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      padding: 12px;
+      border-radius: 8px;
+      display: inline-block;
+      min-width: 250px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hierarchy-container">
+    <h2><i class="fas fa-map-marked-alt"></i> Explore the Location Hierarchy</h2>
+    <div class="hierarchy-item">
+      <span class="clickable" onclick="toggle('state-level', this)">
+        <i class="fas fa-chevron-right icon"></i> India
+      </span>
+      <div id="state-level" class="level">
+        <div class="hierarchy-item">
+          <span class="clickable" onclick="toggle('kerala-level', this)">
+            <i class="fas fa-chevron-right icon"></i> Kerala
+          </span>
+          <div id="kerala-level" class="level">
+            <p>Kochi</p>
+            <p>Trivandrum</p>
+            <p>Kozhikode</p>
+          </div>
+        </div>
+
+        <div class="hierarchy-item">
+          <span class="clickable" onclick="toggle('karnataka-level', this)">
+            <i class="fas fa-chevron-right icon"></i> Karnataka
+          </span>
+          <div id="karnataka-level" class="level">
+            <p>Bangalore</p>
+            <p>Mysore</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="classifier-container">
+    <h2><i class="fas fa-users"></i> Age Group Classifier</h2>
+    <p>Enter an age and see which group it belongs to:</p>
+    <input type="number" id="ageInput" placeholder="Enter age" />
+    <button onclick="classifyAge()">Classify</button>
+    <p id="result">Result: Please enter an age.</p>
+  </div>
+
+  <script>
+    function toggle(id, clickedElement) {
+      const el = document.getElementById(id);
+      const icon = clickedElement.querySelector('.icon');
+
+      if (el.style.display === "block") {
+        el.style.display = "none";
+        icon.style.transform = "rotate(0deg)"; // Reset icon for collapsed
+        clickedElement.parentNode.classList.remove('expanded');
+      } else {
+        el.style.display = "block";
+        icon.style.transform = "rotate(90deg)"; // Rotate icon for expanded
+        clickedElement.parentNode.classList.add('expanded');
+      }
+    }
+
+    function classifyAge() {
+      const ageInput = document.getElementById("ageInput");
+      const age = parseInt(ageInput.value);
+      let group = "";
+      let resultElement = document.getElementById("result");
+
+      if (isNaN(age) || ageInput.value.trim() === "") {
+        group = "Please enter a valid number.";
+        resultElement.style.backgroundColor = '#ffebee'; /* Light red for error */
+        resultElement.style.borderColor = '#ef9a9a';
+        resultElement.style.color = '#c62828';
+      } else if (age < 0) {
+         group = "Age cannot be negative.";
+         resultElement.style.backgroundColor = '#ffebee';
+         resultElement.style.borderColor = '#ef9a9a';
+         resultElement.style.color = '#c62828';
+      }
+      else if (age <= 12) {
+        group = "Child (0–12)";
+        resultElement.style.backgroundColor = '#e8f5e9';
+        resultElement.style.borderColor = '#c8e6c9';
+        resultElement.style.color = '#2c3e50';
+      } else if (age <= 19) {
+        group = "Teen (13–19)";
+        resultElement.style.backgroundColor = '#e3f2fd';
+        resultElement.style.borderColor = '#bbdefb';
+        resultElement.style.color = '#2c3e50';
+      } else if (age <= 35) {
+        group = "Young Adult (20–35)";
+        resultElement.style.backgroundColor = '#fff3e0';
+        resultElement.style.borderColor = '#ffe0b2';
+        resultElement.style.color = '#2c3e50';
+      } else if (age <= 60) {
+        group = "Adult (36–60)";
+        resultElement.style.backgroundColor = '#f3e5f5';
+        resultElement.style.borderColor = '#e1bee7';
+        resultElement.style.color = '#2c3e50';
+      } else {
+        group = "Senior (60+)";
+        resultElement.style.backgroundColor = '#ede7f6';
+        resultElement.style.borderColor = '#d1c4e9';
+        resultElement.style.color = '#2c3e50';
+      }
+      resultElement.innerText = "Result: " + group;
+    }
+  </script>
+
+</body>
+</html>

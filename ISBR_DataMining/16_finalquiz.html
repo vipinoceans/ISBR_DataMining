@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1 Quiz: Introduction to Data Mining</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4A5568 0%, #2D3748 100%); /* Subtle blue-grey gradient */
+            color: white;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            text-align: center;
+            color: #A7D9F0;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #7FB3D5;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: #A7D9F0;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .question-block {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            padding: 5px 0;
+            transition: color 0.2s ease;
+        }
+
+        .options label:hover {
+            color: #A7D9F0;
+        }
+
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .answer-reveal {
+            margin-top: 10px;
+            font-weight: bold;
+            display: none; /* Hidden by default */
+        }
+
+        .answer-reveal.correct-feedback {
+            color: #81C784; /* Soft green for correct */
+        }
+
+        .answer-reveal.incorrect-feedback {
+            color: #EF5350; /* Soft red for incorrect */
+        }
+
+        .short-answer-area {
+            margin-top: 15px;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(167, 217, 240, 0.3) 0%, rgba(167, 217, 240, 0.1) 100%); /* Light blue highlight */
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🧠 Module 1 Quiz: Introduction to Data Mining</h1>
+        <p style="text-align: center; margin-bottom: 30px; font-size: 1.1em; opacity: 0.9;">
+            Test your knowledge on the basics of Data Mining!
+        </p>
+
+        <h2>🔢 Multiple Choice Questions (MCQs)</h2>
+
+        <div class="question-block">
+            <div class="question-text">1. What is the main goal of data mining?</div>
+            <div class="options">
+                <label><input type="radio" name="q1" value="a"> A) Store data</label>
+                <label><input type="radio" name="q1" value="b"> B) Clean data</label>
+                <label><input type="radio" name="q1" value="c"> C) Discover patterns from data</label>
+                <label><input type="radio" name="q1" value="d"> D) Visualize graphs</label>
+            </div>
+            <div class="answer-reveal" data-correct="c" data-full-answer="C) Discover patterns from data"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">2. Which of these is a real-world use case of data mining?</div>
+            <div class="options">
+                <label><input type="radio" name="q2" value="a"> A) Password resets</label>
+                <label><input type="radio" name="q2" value="b"> B) Netflix recommendations</label>
+                <label><input type="radio" name="q2" value="c"> C) Changing fonts</label>
+                <label><input type="radio" name="q2" value="d"> D) Using Google Maps</label>
+            </div>
+            <div class="answer-reveal" data-correct="b" data-full-answer="B) Netflix recommendations"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">3. Which type of data mining task does ‘clustering’ belong to?</div>
+            <div class="options">
+                <label><input type="radio" name="q3" value="a"> A) Descriptive</label>
+                <label><input type="radio" name="q3" value="b"> B) Predictive</label>
+                <label><input type="radio" name="q3" value="c"> C) Cleaning</label>
+                <label><input type="radio" name="q3" value="d"> D) Sampling</label>
+            </div>
+            <div class="answer-reveal" data-correct="a" data-full-answer="A) Descriptive"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">4. What does 'Garbage In, Garbage Out' mean?</div>
+            <div class="options">
+                <label><input type="radio" name="q4" value="a"> A) If you eat junk, you'll feel bad</label>
+                <label><input type="radio" name="q4" value="b"> B) Good data gives wrong results</label>
+                <label><input type="radio" name="q4" value="c"> C) Bad data leads to bad results</label>
+                <label><input type="radio" name="q4" value="d"> D) Algorithms don’t need clean data</label>
+            </div>
+            <div class="answer-reveal" data-correct="c" data-full-answer="C) Bad data leads to bad results"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">5. Which of these is used to handle missing values?</div>
+            <div class="options">
+                <label><input type="radio" name="q5" value="a"> A) Compression</label>
+                <label><input type="radio" name="q5" value="b"> B) Deletion</label>
+                <label><input type="radio" name="q5" value="c"> C) PCA</label>
+                <label><input type="radio" name="q5" value="d"> D) Joining</label>
+            </div>
+            <div class="answer-reveal" data-correct="b" data-full-answer="B) Deletion"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">6. What is the main idea behind PCA (Principal Component Analysis)?</div>
+            <div class="options">
+                <label><input type="radio" name="q6" value="a"> A) Increase data columns</label>
+                <label><input type="radio" name="q6" value="b"> B) Decrease data rows</label>
+                <label><input type="radio" name="q6" value="c"> C) Reduce dimensions while preserving patterns</label>
+                <label><input type="radio" name="q6" value="d"> D) Normalize everything</label>
+            </div>
+            <div class="answer-reveal" data-correct="c" data-full-answer="C) Reduce dimensions while preserving patterns"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">7. Which technique adjusts values to a 0–1 range?</div>
+            <div class="options">
+                <label><input type="radio" name="q7" value="a"> A) Sampling</label>
+                <label><input type="radio" name="q7" value="b"> B) Standardization</label>
+                <label><input type="radio" name="q7" value="c"> C) Normalization</label>
+                <label><input type="radio" name="q7" value="d"> D) Compression</label>
+            </div>
+            <div class="answer-reveal" data-correct="c" data-full-answer="C) Normalization"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">8. Which tool is commonly used for hands-on data mining in this module?</div>
+            <div class="options">
+                <label><input type="radio" name="q8" value="a"> A) Photoshop</label>
+                <label><input type="radio" name="q8" value="b"> B) Jupyter Notebook</label>
+                <label><input type="radio" name="q8" value="c"> C) MS Word</label>
+                <label><input type="radio" name="q8" value="d"> D) Figma</label>
+            </div>
+            <div class="answer-reveal" data-correct="b" data-full-answer="B) Jupyter Notebook"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">9. What type of data mining system is Apache Spark?</div>
+            <div class="options">
+                <label><input type="radio" name="q9" value="a"> A) Desktop</label>
+                <label><input type="radio" name="q9" value="b"> B) Distributed</label>
+                <label><input type="radio" name="q9" value="c"> C) Cloud only</label>
+                <label><input type="radio" name="q9" value="d"> D) Offline</label>
+            </div>
+            <div class="answer-reveal" data-correct="b" data-full-answer="B) Distributed"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">10. What is entity resolution?</div>
+            <div class="options">
+                <label><input type="radio" name="q10" value="a"> A) Identifying columns</label>
+                <label><input type="radio" name="q10" value="b"> B) Matching schemas</label>
+                <label><input type="radio" name="q10" value="c"> C) Identifying duplicate records</label>
+                <label><input type="radio" name="q10" value="d"> D) Fixing outliers</label>
+            </div>
+            <div class="answer-reveal" data-correct="c" data-full-answer="C) Identifying duplicate records"></div>
+        </div>
+
+        <h2>✅ True or False</h2>
+
+        <div class="question-block">
+            <div class="question-text">11. Data mining only works on structured data.</div>
+            <div class="options">
+                <label><input type="radio" name="q11" value="true"> True</label>
+                <label><input type="radio" name="q11" value="false"> False</label>
+            </div>
+            <div class="answer-reveal" data-correct="false" data-full-answer="False"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">12. Classification is a supervised learning technique.</div>
+            <div class="options">
+                <label><input type="radio" name="q12" value="true"> True</label>
+                <label><input type="radio" name="q12" value="false"> False</label>
+            </div>
+            <div class="answer-reveal" data-correct="true" data-full-answer="True"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">13. Standardization scales data between 0 and 1.</div>
+            <div class="options">
+                <label><input type="radio" name="q13" value="true"> True</label>
+                <label><input type="radio" name="q13" value="false"> False</label>
+            </div>
+            <div class="answer-reveal" data-correct="false" data-full-answer="False"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">14. Time series forecasting is a descriptive task.</div>
+            <div class="options">
+                <label><input type="radio" name="q14" value="true"> True</label>
+                <label><input type="radio" name="q14" value="false"> False</label>
+            </div>
+            <div class="answer-reveal" data-correct="false" data-full-answer="False"></div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">15. Sampling helps reduce the size of a dataset.</div>
+            <div class="options">
+                <label><input type="radio" name="q15" value="true"> True</label>
+                <label><input type="radio" name="q15" value="false"> False</label>
+            </div>
+            <div class="answer-reveal" data-correct="true" data-full-answer="True"></div>
+        </div>
+
+        <h2>✍️ Short Answer (One-liner)</h2>
+
+        <div class="question-block">
+            <div class="question-text">16. What is one example of an inconsistent data format?</div>
+            <div class="short-answer-area">Answer: Different date formats like "12/01/2023" vs "2023-01-12"</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">17. Name one tool used for data mining discussed in this session.</div>
+            <div class="short-answer-area">Answer: Python, Jupyter, Weka, Spark, SQL Server ML, etc.</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">18. Why is data preprocessing important before building models?</div>
+            <div class="short-answer-area">Answer: To ensure data is clean and suitable for analysis; avoid garbage in, garbage out.</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">19. List one common problem found in raw datasets.</div>
+            <div class="short-answer-area">Answer: Missing values, outliers, inconsistent formats, etc.</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-text">20. What is the difference between descriptive and predictive tasks?</div>
+            <div class="short-answer-area">Answer: Descriptive finds patterns in existing data; predictive forecasts future values.</div>
+        </div>
+
+    </div>
+
+    <script>
+        document.querySelectorAll('.question-block').forEach(block => {
+            const radios = block.querySelectorAll('input[type="radio"]');
+            const reveal = block.querySelector('.answer-reveal');
+            
+            // Only process if it's a multiple choice or true/false question
+            if (reveal && radios.length > 0) {
+                const correctAnswerValue = reveal.dataset.correct;
+                const fullAnswerText = reveal.dataset.fullAnswer;
+
+                radios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        // Clear previous feedback classes
+                        reveal.classList.remove('correct-feedback', 'incorrect-feedback');
+
+                        if (radio.value === correctAnswerValue) {
+                            reveal.textContent = `Correct!`;
+                            reveal.classList.add('correct-feedback');
+                        } else {
+                            reveal.textContent = `Incorrect. The correct answer is: ${fullAnswerText}`;
+                            reveal.classList.add('incorrect-feedback');
+                        }
+                        reveal.style.display = 'block'; // Show the feedback
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
