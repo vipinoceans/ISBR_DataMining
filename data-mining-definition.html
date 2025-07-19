@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is Data Mining? - Interactive Slides</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            max-width: 90%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+
+        h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #ffd93d;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            text-align: left;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .highlight {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .question {
+            background: rgba(255, 107, 107, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .interactive {
+            background: rgba(75, 192, 192, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 4px solid #4BC0C0;
+        }
+
+        .poll {
+            background: rgba(255, 193, 61, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 4px solid #ffc13d;
+        }
+
+        .timer {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(255, 107, 107, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            font-weight: bold;
+        }
+
+        .answer-reveal {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2ecc71;
+        }
+
+        .challenge {
+            background: rgba(155, 89, 182, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #9b59b6;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-counter">
+            <span id="slideNumber">1</span> / 9
+        </div>
+
+        <div class="timer" id="timer" style="display: none;">
+            ⏰ <span id="timeLeft">0</span>s
+        </div>
+
+        <!-- Slide 1: What is Data Mining? -->
+        <div class="slide active">
+            <h1>What is Data Mining?</h1>
+            <div class="highlight">
+                <h2 style="color: #ffd93d; font-size: 2em;">The process of discovering patterns and knowledge from large datasets</h2>
+            </div>
+            <div class="interactive">
+                <strong>Interactive Question:</strong> Think of a time when you noticed a pattern in your daily life. What was it?
+                <br><em>(Give students 30 seconds to think, then ask 2-3 to share)</em>
+            </div>
+            <button class="nav-btn" onclick="startTimer(30)" style="margin-top: 20px;">Start 30s Think Time</button>
+        </div>
+
+        <!-- Slide 2: Key Components -->
+        <div class="slide">
+            <h2>The Three Pillars of Data Mining</h2>
+            <div class="highlight">
+                <ul>
+                    <li><span class="emoji">📊</span><strong>DATA</strong> - The raw material (structured, unstructured, semi-structured)</li>
+                    <li><span class="emoji">⚙️</span><strong>ALGORITHMS</strong> - The "how" (mathematical methods)</li>
+                    <li><span class="emoji">🧠</span><strong>DOMAIN KNOWLEDGE</strong> - The "why" (human expertise)</li>
+                </ul>
+            </div>
+            <div class="poll">
+                <strong>Quick Poll:</strong> Which pillar do you think is MOST important? Raise your hand for:
+                <br>📊 Data | ⚙️ Algorithms | 🧠 Domain Knowledge
+            </div>
+        </div>
+
+        <!-- Slide 3: Data Types Interactive -->
+        <div class="slide">
+            <h2>Types of Data - Can You Classify These?</h2>
+            <div class="challenge">
+                <h3>🎯 Interactive Challenge:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Your student ID number</strong> → ?</li>
+                    <li><strong>Your Instagram photo</strong> → ?</li>
+                    <li><strong>Your WhatsApp chat</strong> → ?</li>
+                    <li><strong>Your exam score</strong> → ?</li>
+                </ul>
+            </div>
+            <p style="margin-top: 30px; font-size: 1.5em;"><em>Structured | Semi-structured | Unstructured</em></p>
+            <div class="interactive">
+                <strong>Think-Pair-Share:</strong> Discuss with your neighbor for 1 minute!
+            </div>
+            <button class="nav-btn" onclick="startTimer(60)" style="margin-top: 20px;">Start 1min Discussion</button>
+        </div>
+
+        <!-- Slide 4: Data Types Revealed -->
+        <div class="slide">
+            <h2>Data Types - Answers Revealed!</h2>
+            <div class="answer-reveal">
+                <ul>
+                    <li><span class="emoji">📋</span><strong>Student ID:</strong> Structured (fits in database table)</li>
+                    <li><span class="emoji">📸</span><strong>Instagram photo:</strong> Unstructured (no fixed format)</li>
+                    <li><span class="emoji">💬</span><strong>WhatsApp chat:</strong> Semi-structured (has timestamp, but free text)</li>
+                    <li><span class="emoji">📊</span><strong>Exam score:</strong> Structured (numerical, organized)</li>
+                </ul>
+            </div>
+            <h3 style="margin-top: 30px;">How did you do? Any surprises?</h3>
+            <div class="poll">
+                <strong>Quick show of hands:</strong> Who got all 4 correct?
+            </div>
+        </div>
+
+        <!-- Slide 5: Data Mining vs Related Fields -->
+        <div class="slide">
+            <h2>Data Mining vs. The Lookalikes</h2>
+            <div class="highlight">
+                <h3><span class="emoji">📈</span>Statistics vs Data Mining:</h3>
+                <p><strong>Statistics:</strong> "I have a hypothesis, let me test it" (Confirmatory)</p>
+                <p><strong>Data Mining:</strong> "Let me find what's hidden" (Exploratory)</p>
+                
+                <h3 style="margin-top: 20px;"><span class="emoji">🤖</span>Machine Learning vs Data Mining:</h3>
+                <p><strong>Data Mining:</strong> The detective work (finding patterns)</p>
+                <p><strong>Machine Learning:</strong> The automation (using patterns to predict)</p>
+            </div>
+            <div class="interactive">
+                <strong>Quick Check:</strong> Which field would you use to test if "students who eat breakfast perform better"?
+            </div>
+        </div>
+
+        <!-- Slide 6: Database vs Data Mining Challenge -->
+        <div class="slide">
+            <h2>🎯 Challenge: Database Query vs. Data Mining</h2>
+            <div class="poll">
+                <strong>Scenario:</strong> You're analyzing student performance data
+            </div>
+            <div class="challenge">
+                <h3>Which is which?</h3>
+                <ul style="font-size: 1.4em;">
+                    <li><strong>A:</strong> "Show me all students who scored above 80"</li>
+                    <li><strong>B:</strong> "Find patterns in why some students perform better"</li>
+                </ul>
+            </div>
+            <p style="margin-top: 30px;"><em>Give students 15 seconds to decide...</em></p>
+            <button class="nav-btn" onclick="startTimer(15)" style="margin-top: 20px;">Start 15s Think Time</button>
+        </div>
+
+        <!-- Slide 7: Answer Revealed -->
+        <div class="slide">
+            <h2>Database vs. Data Mining - Answer!</h2>
+            <div class="answer-reveal">
+                <ul>
+                    <li><span class="emoji">🗄️</span><strong>A: Database Query</strong> - You know WHAT you're looking for</li>
+                    <li><span class="emoji">🔍</span><strong>B: Data Mining</strong> - You're discovering UNKNOWN patterns</li>
+                </ul>
+            </div>
+            <div class="highlight">
+                <strong>Key Insight:</strong> Database queries find known information.<br>
+                Data mining discovers unknown knowledge!
+            </div>
+            <h3 style="margin-top: 30px;">Make sense? Any questions so far?</h3>
+        </div>
+
+        <!-- Slide 8: Real Example Interactive -->
+        <div class="slide">
+            <h2>🎯 Your Turn: Spotify Example</h2>
+            <div class="highlight">
+                <h3>Spotify has data on:</h3>
+                <ul>
+                    <li>Your listening history</li>
+                    <li>Songs you skip</li>
+                    <li>Time of day you listen</li>
+                    <li>Your playlist names</li>
+                </ul>
+            </div>
+            <div class="challenge">
+                <strong>Group Challenge (2 minutes):</strong><br>
+                What patterns could Spotify discover to improve your experience?<br>
+                <em>Discuss with your table, then we'll share ideas!</em>
+            </div>
+            <button class="nav-btn" onclick="startTimer(120)" style="margin-top: 20px;">Start 2min Group Work</button>
+        </div>
+
+        <!-- Slide 9: Summary Check -->
+        <div class="slide">
+            <h2>Quick Knowledge Check! 🧠</h2>
+            <div class="challenge">
+                <h3>Finish this sentence:</h3>
+                <p style="font-size: 1.8em; margin: 30px 0;">"Data Mining is the process of..."</p>
+            </div>
+            <div class="interactive">
+                <strong>Everyone together:</strong> Say it out loud in 3... 2... 1...
+            </div>
+            <div class="answer-reveal" style="margin-top: 30px;">
+                <h2>"...discovering patterns and knowledge from large datasets!"</h2>
+            </div>
+            <p style="font-size: 1.4em; margin-top: 20px;"><em>Perfect! You've got the foundation. Ready for techniques?</em></p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let timerInterval;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            if (n >= totalSlides) currentSlide = 0;
+            if (n < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+            
+            // Hide timer when changing slides
+            stopTimer();
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        function startTimer(seconds) {
+            const timerElement = document.getElementById('timer');
+            const timeLeftElement = document.getElementById('timeLeft');
+            
+            timerElement.style.display = 'block';
+            timeLeftElement.textContent = seconds;
+            
+            timerInterval = setInterval(() => {
+                seconds--;
+                timeLeftElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    stopTimer();
+                    // Optional: Play a sound or show notification
+                    timerElement.innerHTML = '⏰ Time\'s up!';
+                    setTimeout(() => {
+                        timerElement.style.display = 'none';
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            document.getElementById('timer').style.display = 'none';
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                if (currentSlide < totalSlides - 1) changeSlide(1);
+            } else if (event.key === 'ArrowLeft') {
+                if (currentSlide > 0) changeSlide(-1);
+            } else if (event.key === 'Escape') {
+                stopTimer();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

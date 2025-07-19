@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mining Functionalities - Interactive Slides</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            max-width: 95%;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #e74c3c, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+        }
+
+        h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #f39c12;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            text-align: left;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .highlight {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .descriptive {
+            background: rgba(52, 152, 219, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .predictive {
+            background: rgba(155, 89, 182, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #9b59b6;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .interactive {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+            border-left: 4px solid #2ecc71;
+        }
+
+        .challenge {
+            background: rgba(230, 126, 34, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #e67e22;
+            text-align: center;
+        }
+
+        .timer {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(231, 76, 60, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            font-weight: bold;
+        }
+
+        .scenario-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            width: 45%;
+            min-height: 100px;
+        }
+
+        .scenario-card:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .scenario-card.selected {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.2);
+        }
+
+        .functionality-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .function-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #3498db;
+        }
+
+        .function-box.predictive {
+            border-left-color: #9b59b6;
+        }
+
+        .recap-section {
+            background: rgba(39, 174, 96, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+
+        .answer-reveal {
+            background: rgba(46, 204, 113, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #2ecc71;
+            display: none;
+        }
+
+        .answer-reveal.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .poll {
+            background: rgba(241, 196, 15, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #f1c40f;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide-counter">
+            <span id="slideNumber">1</span> / 12
+        </div>
+
+        <div class="timer" id="timer" style="display: none;">
+            ⏰ <span id="timeLeft">0</span>s
+        </div>
+
+        <!-- Slide 1: Introduction -->
+        <div class="slide active">
+            <h1>Data Mining Functionalities</h1>
+            <div class="highlight">
+                <h2>What can Data Mining actually DO?</h2>
+                <p style="font-size: 1.5em; margin-top: 30px;">Two main categories of tasks:</p>
+                <div class="functionality-grid">
+                    <div class="function-box">
+                        <h3><span class="emoji">🔍</span>DESCRIPTIVE</h3>
+                        <p>What happened? What patterns exist?</p>
+                    </div>
+                    <div class="function-box predictive">
+                        <h3><span class="emoji">🔮</span>PREDICTIVE</h3>
+                        <p>What will happen? What should we expect?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Descriptive Overview -->
+        <div class="slide">
+            <h2>Descriptive Tasks: Understanding the Past</h2>
+            <div class="descriptive">
+                <h3><span class="emoji">🔍</span>Three Main Types:</h3>
+                <ul>
+                    <li><strong>Classification:</strong> Sorting things into categories</li>
+                    <li><strong>Clustering:</strong> Finding hidden groups</li>
+                    <li><strong>Association Rules:</strong> Discovering relationships</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <strong>Think about it:</strong> When you organize your music playlist, photos, or files - you're doing descriptive data mining manually!
+            </div>
+        </div>
+
+        <!-- Slide 3: Classification Deep Dive -->
+        <div class="slide">
+            <h2>Classification: The Sorting Expert</h2>
+            <div class="highlight">
+                <h3><span class="emoji">📋</span>Supervised Learning</h3>
+                <p><strong>Goal:</strong> Learn from examples to classify new data</p>
+            </div>
+            <div class="challenge">
+                <h3>Real Examples:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Email:</strong> Spam vs. Not Spam</li>
+                    <li><strong>Medical:</strong> Tumor → Benign vs. Malignant</li>
+                    <li><strong>Banking:</strong> Loan → Approve vs. Reject</li>
+                    <li><strong>Education:</strong> Student → Pass vs. Fail</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <strong>Quick Question:</strong> What other classification examples can you think of?
+            </div>
+        </div>
+
+        <!-- Slide 4: Clustering Deep Dive -->
+        <div class="slide">
+            <h2>Clustering: The Group Finder</h2>
+            <div class="highlight">
+                <h3><span class="emoji">🎯</span>Unsupervised Learning</h3>
+                <p><strong>Goal:</strong> Find hidden patterns without knowing the answer</p>
+            </div>
+            <div class="challenge">
+                <h3>Real Examples:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Netflix:</strong> Group users by viewing preferences</li>
+                    <li><strong>Marketing:</strong> Customer segments for targeting</li>
+                    <li><strong>Social Media:</strong> Community detection</li>
+                    <li><strong>Genetics:</strong> Group genes by similar functions</li>
+                </ul>
+            </div>
+            <div class="poll">
+                <strong>Think-Pair-Share:</strong> How might Instagram use clustering? (30 seconds with neighbor)
+            </div>
+            <button class="nav-btn" onclick="startTimer(30)">Start 30s Discussion</button>
+        </div>
+
+        <!-- Slide 5: Association Rules Deep Dive -->
+        <div class="slide">
+            <h2>Association Rules: The Connection Detective</h2>
+            <div class="highlight">
+                <h3><span class="emoji">🛒</span>Market Basket Analysis</h3>
+                <p><strong>Goal:</strong> Find items that frequently appear together</p>
+            </div>
+            <div class="challenge">
+                <h3>Famous Examples:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Supermarket:</strong> "People who buy bread also buy butter"</li>
+                    <li><strong>Amazon:</strong> "Customers who bought X also bought Y"</li>
+                    <li><strong>Netflix:</strong> "People who watched A also watched B"</li>
+                    <li><strong>Spotify:</strong> "Songs often played together"</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <strong>Fun Fact:</strong> The classic example is "Beer & Diapers" - discovered that men buying diapers often bought beer too!
+            </div>
+        </div>
+
+        <!-- Slide 6: Predictive Overview -->
+        <div class="slide">
+            <h2>Predictive Tasks: Glimpsing the Future</h2>
+            <div class="predictive">
+                <h3><span class="emoji">🔮</span>Two Main Types:</h3>
+                <ul>
+                    <li><strong>Regression:</strong> Predicting numbers (How much? How many?)</li>
+                    <li><strong>Time Series:</strong> Predicting future trends</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <strong>Key Difference:</strong> Descriptive looks at existing data, Predictive forecasts future data
+            </div>
+        </div>
+
+        <!-- Slide 7: Regression Deep Dive -->
+        <div class="slide">
+            <h2>Regression: The Number Prophet</h2>
+            <div class="highlight">
+                <h3><span class="emoji">📈</span>Numerical Prediction</h3>
+                <p><strong>Goal:</strong> Predict a specific number value</p>
+            </div>
+            <div class="challenge">
+                <h3>Real Examples:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Real Estate:</strong> Predict house prices</li>
+                    <li><strong>Sales:</strong> Predict quarterly revenue</li>
+                    <li><strong>Education:</strong> Predict student GPA</li>
+                    <li><strong>Weather:</strong> Predict tomorrow's temperature</li>
+                </ul>
+            </div>
+            <div class="poll">
+                <strong>Quick Poll:</strong> Raise your hand if you've ever tried to predict your exam score before getting results!
+            </div>
+        </div>
+
+        <!-- Slide 8: Time Series Deep Dive -->
+        <div class="slide">
+            <h2>Time Series: The Trend Tracker</h2>
+            <div class="highlight">
+                <h3><span class="emoji">📊</span>Forecasting Over Time</h3>
+                <p><strong>Goal:</strong> Predict future values based on historical trends</p>
+            </div>
+            <div class="challenge">
+                <h3>Real Examples:</h3>
+                <ul style="text-align: left; font-size: 1.4em;">
+                    <li><strong>Stock Market:</strong> Predict tomorrow's prices</li>
+                    <li><strong>Weather:</strong> 7-day forecast</li>
+                    <li><strong>Business:</strong> Monthly sales projections</li>
+                    <li><strong>Social Media:</strong> Trending topics prediction</li>
+                </ul>
+            </div>
+            <div class="interactive">
+                <strong>Challenge:</strong> What time series predictions do you encounter daily?
+            </div>
+        </div>
+
+        <!-- Slide 9: Interactive Activity - Setup -->
+        <div class="slide">
+            <h1>🎯 Interactive Challenge Time!</h1>
+            <div class="challenge">
+                <h2>Categorization Game</h2>
+                <p>I'll show you real-world scenarios. Your job:</p>
+                <h3>Classify each into one of our 5 functionalities!</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
+                    <div class="descriptive">
+                        <strong>Descriptive:</strong>
+                        <br>• Classification
+                        <br>• Clustering  
+                        <br>• Association Rules
+                    </div>
+                    <div class="predictive">
+                        <strong>Predictive:</strong>
+                        <br>• Regression
+                        <br>• Time Series
+                    </div>
+                </div>
+            </div>
+            <div class="interactive">
+                <strong>Get ready:</strong> Work in pairs, 6 scenarios coming up!
+            </div>
+        </div>
+
+        <!-- Slide 10: Scenarios 1-3 -->
+        <div class="slide">
+            <h2>Scenarios 1-3: What functionality?</h2>
+            <div class="challenge">
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 1</h3>
+                    <p><strong>WhatsApp</strong> automatically detects if a message is spam and moves it to a separate folder</p>
+                </div>
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 2</h3>
+                    <p><strong>Zomato</strong> groups restaurants into categories like "Quick Bites", "Fine Dining" without predefined labels</p>
+                </div>
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 3</h3>
+                    <p><strong>Ola</strong> predicts the fare for your trip before you book</p>
+                </div>
+            </div>
+            <button class="nav-btn" onclick="showAnswers('set1')">Reveal Answers</button>
+            <div id="answers-set1" class="answer-reveal">
+                <strong>Answers:</strong> 1) Classification | 2) Clustering | 3) Regression
+            </div>
+        </div>
+
+        <!-- Slide 11: Scenarios 4-6 -->
+        <div class="slide">
+            <h2>Scenarios 4-6: What functionality?</h2>
+            <div class="challenge">
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 4</h3>
+                    <p><strong>Flipkart</strong> suggests "People who bought this phone also bought a screen protector and case"</p>
+                </div>
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 5</h3>
+                    <p><strong>Weather app</strong> shows "Next week will be 15% rainier than usual"</p>
+                </div>
+                <div class="scenario-card" onclick="toggleScenario(this)">
+                    <h3>Scenario 6</h3>
+                    <p><strong>Paytm</strong> predicts your monthly spending will be ₹15,000 based on your history</p>
+                </div>
+            </div>
+            <button class="nav-btn" onclick="showAnswers('set2')">Reveal Answers</button>
+            <div id="answers-set2" class="answer-reveal">
+                <strong>Answers:</strong> 4) Association Rules | 5) Time Series | 6) Regression
+            </div>
+        </div>
+
+        <!-- Slide 12: Quick Recap & Questions -->
+        <div class="slide">
+            <h1>Quick Recap & Questions</h1>
+            <div class="recap-section">
+                <h3><span class="emoji">🔍</span>Descriptive Tasks:</h3>
+                <p><strong>Classification</strong> (spam detection) | <strong>Clustering</strong> (customer groups) | <strong>Association Rules</strong> (market basket)</p>
+                
+                <h3 style="margin-top: 20px;"><span class="emoji">🔮</span>Predictive Tasks:</h3>
+                <p><strong>Regression</strong> (price prediction) | <strong>Time Series</strong> (trend forecasting)</p>
+            </div>
+            
+            <div class="challenge">
+                <h3>Final Challenge:</h3>
+                <p style="font-size: 1.4em;">In 10 seconds, name one example of each type from your daily life!</p>
+            </div>
+            
+            <div class="interactive">
+                <strong>Questions? Doubts? Clarifications?</strong>
+                <br><em>This is your moment - ask away!</em>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Ready to dive into HOW these techniques actually work? 🚀</h2>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let timerInterval;
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            if (n >= totalSlides) currentSlide = 0;
+            if (n < 0) currentSlide = totalSlides - 1;
+            
+            slides[currentSlide].classList.add('active');
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+            
+            // Hide timer when changing slides
+            stopTimer();
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            showSlide(currentSlide);
+        }
+
+        function startTimer(seconds) {
+            const timerElement = document.getElementById('timer');
+            const timeLeftElement = document.getElementById('timeLeft');
+            
+            timerElement.style.display = 'block';
+            timeLeftElement.textContent = seconds;
+            
+            timerInterval = setInterval(() => {
+                seconds--;
+                timeLeftElement.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    stopTimer();
+                    timerElement.innerHTML = '⏰ Time\'s up!';
+                    setTimeout(() => {
+                        timerElement.style.display = 'none';
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            document.getElementById('timer').style.display = 'none';
+        }
+
+        function toggleScenario(element) {
+            element.classList.toggle('selected');
+        }
+
+        function showAnswers(setId) {
+            const answersElement = document.getElementById('answers-' + setId);
+            answersElement.classList.add('show');
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                if (currentSlide < totalSlides - 1) changeSlide(1);
+            } else if (event.key === 'ArrowLeft') {
+                if (currentSlide > 0) changeSlide(-1);
+            } else if (event.key === 'Escape') {
+                stopTimer();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
